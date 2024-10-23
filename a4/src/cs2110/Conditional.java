@@ -1,12 +1,16 @@
 package cs2110;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Conditional implements Expression{
-    Expression trueBranch;
-    Expression falseBranch;
-    Expression condition;
-    int opCount = 0;
+    private Expression trueBranch;
+    private Expression falseBranch;
+    private Expression condition;
+    //TODO 我这儿不是很清楚。document上写的是The number of “operations” represented by a Conditional tree should be
+    // counted in the worst case; it should include the cost of evaluating the condition（这儿的意思是condition cost是1吗）,
+    // plus the cost of the more expensive branch, plus 1 for the action of selecting between them.
+    private int opCount = 0;
     /**
      * Create a node representing the value `value`.
      */
@@ -43,7 +47,7 @@ public class Conditional implements Expression{
      */
     @Override
     public int opCount(){
-
+        //TODO 这个不确定，需要跟rose对一下。
         int conditionCount = condition.opCount();
 
         int branchCount = (trueBranch.opCount() >= falseBranch.opCount())? trueBranch.opCount(): falseBranch.opCount();
@@ -80,8 +84,11 @@ public class Conditional implements Expression{
     }
 
     public Set<String> dependencies(){
-        // TODO
-        throw new RuntimeException();
+        Set<String> newSet = new HashSet<>();
+        newSet.addAll(trueBranch.dependencies());
+        newSet.addAll(falseBranch.dependencies());
+        newSet.addAll(condition.dependencies());
+        return newSet;
     }
 
     @Override

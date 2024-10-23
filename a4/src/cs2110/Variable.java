@@ -4,52 +4,47 @@ import java.util.Set;
 
 public class Variable implements Expression{
     /**
-     * The client accessible variable to be a number. input should not
-     * be null.
+     * The variable of this expression. Should not be empty or null.
      */
-    private String name;
-
+    final String name;
 
     /**
-     * Number of operations requires to evaluate this value. opCount must
-     * greater or equals to 0
-     */
-    private int opCount = 0;
-
-
-    /**
-     * Create a node representing the variable 'variable'.
+     * Create a node representing the variable.
      */
     public Variable(String name) {
         this.name = name;
-        this.opCount = opCount;
     }
 
+    /**
+     * Assert the object's invariant that the variable `name` should not be empty or null.
+     */
     private void assertInv() {
-        assert opCount >= 0;
+        assert !name.isEmpty();
         assert name != null;
     }
 
     /**
-     * Return this node's value.
+     * Return the value of the Variable if the Variable is in vars.
+     * If the Variable is not in vars, throw UnboundVariableException.
      */
     @Override
     public double eval(VarTable vars) throws UnboundVariableException {
-        assertInv();
-        return vars.get(name);
+        if (vars.contains(name)) {
+            return vars.get(name);
+        }
+        throw new UnboundVariableException(name);
     }
 
     /**
-     * Return the number of operations on this variable
+     * No operations needed for evaluate the Variable's value.
      */
     @Override
     public int opCount() {
-        assertInv();
-        return opCount;
+        return 0;
     }
 
     /**
-     * Return the String for the variable name
+     * Return the String for the variable name.
      */
     @Override
     public String infixString() {
@@ -57,12 +52,29 @@ public class Variable implements Expression{
     }
 
     /**
-     * Return the String for the variable name
+     * Return the name representation of this node's variable
      */
     @Override
     public String postfixString() {
         return name;
     }
+
+    /**
+     * Return whether `other` is equal to this.
+     * Return true if `other` has the same name with this.
+     * Return false if `other` does not have the same name with this
+     */
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (other == null || other.getClass() != this.getClass()) {
+            return false;
+        }
+        Variable c = (Variable) other;
+        return name.equals(c.name);
+    }
+
 
     @Override
     public Expression optimize(VarTable vars) {
@@ -70,24 +82,10 @@ public class Variable implements Expression{
         throw new RuntimeException();
     }
 
+
     @Override
     public Set<String> dependencies() {
         // TODO
         throw new RuntimeException();
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        Variable otherVariable = (Variable) other;
-
-        if (other == null || getClass() != other.getClass()) {
-            return false;
-        }
-
-        if (this == other) {
-            return true;
-        }
-
-        return (name.equals(otherVariable.name));
     }
 }

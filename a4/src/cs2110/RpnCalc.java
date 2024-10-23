@@ -17,7 +17,6 @@ import java.util.TreeMap;
  * An interactive calculator for evaluating expressions represented in Reverse Polish Notation.
  */
 public class RpnCalc {
-
     /**
      * Variables and their assigned values that have been set by the user.
      */

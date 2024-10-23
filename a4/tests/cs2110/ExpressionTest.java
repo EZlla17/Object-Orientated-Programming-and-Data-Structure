@@ -97,7 +97,9 @@ class VariableExpressionTest {
     @DisplayName("A Variable node should evaluate to its variable's value when that variable is " +
             "in the var map")
     void testEvalBound() throws UnboundVariableException {
-        fail();  // TODO
+        MapVarTable varTable = MapVarTable.of("x", 2.0);
+        Expression expr = new Variable("x");
+        assertEquals(2.0, expr.eval(varTable));
     }
 
     @Test
@@ -106,28 +108,43 @@ class VariableExpressionTest {
     void testEvalUnbound() {
         // TODO: Uncomment these lines when you have read about testing exceptions in the handout.
         // They assume that your `Variable` constructor takes its name as an argument.
-//        Expression expr = new Variable("x");
-//        assertThrows(UnboundVariableException.class, () -> expr.eval(MapVarTable.empty()));
+        Expression expr = new Variable("x");
+        assertThrows(UnboundVariableException.class, () -> expr.eval(MapVarTable.empty()));
     }
 
 
     @Test
     @DisplayName("A Variable node should report that 0 operations are required to evaluate it")
     void testOpCount() {
-        fail();  // TODO
+        Expression expr = new Variable("x");
+        assertTrue(expr.opCount() == 0);
     }
 
 
     @Test
     @DisplayName("A Variable node should produce an infix representation with just its name")
     void testInfix() {
-        fail();  // TODO
+        Expression expr = new Variable("x");
+        assertTrue(expr.infixString().equals("x"));
+
+        Expression expr2 = new Variable("var");
+        assertTrue(expr2.infixString().equals("var"));
+
+        Expression expr3 = new Variable("1");
+        assertTrue(expr3.infixString().equals("1"));
     }
 
     @Test
     @DisplayName("A Variable node should produce an postfix representation with just its name")
     void testPostfix() {
-        fail();  // TODO
+        Expression expr = new Variable("x");
+        assertTrue(expr.postfixString().equals("x"));
+
+        Expression expr2 = new Variable("var");
+        assertTrue(expr2.postfixString().equals("var"));
+
+        Expression expr3 = new Variable("1");
+        assertTrue(expr3.postfixString().equals("1"));
     }
 
 
@@ -135,8 +152,8 @@ class VariableExpressionTest {
     @DisplayName("A Variable node should equal itself")
     void testEqualsSelf() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Variable("x");
-//        assertTrue(expr.equals(expr));
+        Expression expr = new Variable("x");
+        assertTrue(expr.equals(expr));
     }
 
     @Test
@@ -144,22 +161,25 @@ class VariableExpressionTest {
     void testEqualsTrue() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
         // Force construction of new String objects to detect inadvertent use of `==`
-//        Expression expr1 = new Variable(new String("x"));
-//        Expression expr2 = new Variable(new String("x"));
-//        assertTrue(expr1.equals(expr2));
+        Expression expr1 = new Variable(new String("x"));
+        Expression expr2 = new Variable(new String("x"));
+        assertTrue(expr1.equals(expr2));
+        assertFalse(expr1 == expr2);
     }
 
     @Test
     @DisplayName("A Variable node should not equal another Variable node with a different name")
     void testEqualsFalse() {
-        fail();  // TODO
+        Expression expr1 = new Variable(new String("x"));
+        Expression expr2 = new Variable(new String("y"));
+        assertFalse(expr1.equals(expr2));
     }
 
 
     @Test
     @DisplayName("A Variable node only depends on its name")
     void testDependencies() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
+//        // TODO: Uncomment this test, adjusting constructor invocations as necessary
 //        Expression expr = new Variable("x");
 //        Set<String> deps = expr.dependencies();
 //        assertTrue(deps.contains("x"));
@@ -179,7 +199,7 @@ class VariableExpressionTest {
     @Test
     @DisplayName("A Variable node should optimize to itself if its variable is not in the var map")
     void testOptimizeUnbound() {
-        fail();  // TODO
+//        fail();  // TODO
     }
 }
 
@@ -190,22 +210,60 @@ class OperationExpressionTest {
             "sum")
     void testEvalAdd() throws UnboundVariableException {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Operation(Operator.ADD, new Constant(1.5), new Constant(2));
-//        assertEquals(3.5, expr.eval(MapVarTable.empty()));
+        Expression expr = new Operation(Operator.ADD, new Constant(1.5), new Constant(2));
+        assertEquals(3.5, expr.eval(MapVarTable.empty()));
     }
 
     @Test
     @DisplayName("An Operation node for ADD with a Variable for an operand should evaluate " +
             "to its operands' sum when the variable is in the var map")
     void testEvalAddBound() throws UnboundVariableException {
-        fail();  // TODO
+        MapVarTable varTable = MapVarTable.of("x", 2.0);
+        Expression var = new Variable("x");
+        Expression expr = new Operation(Operator.ADD ,var,new Constant(3.5));
+        assertEquals(5.5, expr.eval(varTable));
+    }
+
+    @Test
+    @DisplayName("An Operation node for DIFFERENT OPERATION with two Constant operands " +
+            "should evaluate to their difference")
+    void testEvalAll() throws UnboundVariableException {
+        Expression expr = new Operation(Operator.SUBTRACT, new Constant(5.0), new Constant(3.0));
+        assertEquals(2.0, expr.eval(MapVarTable.empty()));
+
+        Expression expr2 = new Operation(Operator.DIVIDE, new Constant(10.0), new Constant(2.0));
+        assertEquals(5.0, expr2.eval(MapVarTable.empty()));
+
+        Expression expr3 = new Operation(Operator.POW, new Constant(2.0), new Constant(3.0));
+        assertEquals(8.0, expr3.eval(MapVarTable.empty()));
+
+        Expression expr4 = new Operation(Operator.POW, new Constant(2.0), new Constant(3.0));
+        assertEquals(8.0, expr4.eval(MapVarTable.empty()));
+    }
+
+    @Test
+    @DisplayName("An Operation node with multiple levels of nesting should evaluate to the correct result")
+    void testEvalComplexNesting() throws UnboundVariableException {
+        // Expression: (2 + (3 * (4 - 1))) / 2
+        Expression expr = new Operation(Operator.DIVIDE,
+                new Operation(Operator.ADD,
+                        new Constant(2.0),
+                        new Operation(Operator.MULTIPLY,
+                                new Constant(3.0),
+                                new Operation(Operator.SUBTRACT, new Constant(4.0), new Constant(1.0)))),
+                new Constant(2.0));
+
+        assertEquals(5.5, expr.eval(MapVarTable.empty()));
     }
 
     @Test
     @DisplayName("An Operation node for ADD with a Variable for an operand should throw an " +
             "UnboundVariableException when evaluated if the variable is not in the var map")
     void testEvalAddUnbound() {
-        fail();  // TODO
+        Expression var = new Variable("x");
+        Expression expr = new Operation(Operator.ADD, var, new Constant(3.5));
+
+        assertThrows(UnboundVariableException.class, () -> expr.eval(MapVarTable.empty()));
     }
 
 
@@ -213,7 +271,10 @@ class OperationExpressionTest {
     @DisplayName("An Operation node with leaf operands should report that 1 operation is " +
             "required to evaluate it")
     void testOpCountLeaves() {
-        fail();  // TODO
+        MapVarTable varTable = MapVarTable.of("x", 2.0);
+        Expression var = new Variable("x");
+        Expression expr = new Operation(Operator.ADD ,var,new Constant(3.5));
+        assertEquals(expr.opCount(), 1 );
     }
 
 
@@ -222,15 +283,15 @@ class OperationExpressionTest {
             "the correct number of operations to evaluate it")
     void testOpCountRecursive() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Operation(Operator.ADD,
-//                new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
-//                new Constant(2.0));
-//        assertEquals(2, expr.opCount());
-//
-//        expr = new Operation(Operator.SUBTRACT,
-//                new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
-//                new Operation(Operator.DIVIDE, new Constant(1.5), new Variable("x")));
-//        assertEquals(3, expr.opCount());
+        Expression expr = new Operation(Operator.ADD,
+                new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
+                new Constant(2.0));
+        assertEquals(2, expr.opCount());
+
+        expr = new Operation(Operator.SUBTRACT,
+                new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
+                new Operation(Operator.DIVIDE, new Constant(1.5), new Variable("x")));
+        assertEquals(3, expr.opCount());
     }
 
 
@@ -239,7 +300,10 @@ class OperationExpressionTest {
             "consisting of its first operand, its operator symbol surrounded by spaces, and " +
             "its second operand, all enclosed in parentheses")
     void testInfixLeaves() {
-        fail();  // TODO
+        MapVarTable varTable = MapVarTable.of("x", 2.0);
+        Expression var = new Variable("x");
+        Expression expr = new Operation(Operator.ADD ,var,new Constant(3.5));
+        assertEquals("(x + 3.5)", expr.infixString());
     }
 
     @Test
@@ -247,15 +311,59 @@ class OperationExpressionTest {
             "expected infix representation with parentheses around each operation")
     void testInfixRecursive() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Operation(Operator.ADD,
-//                new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
-//                new Constant(2.0));
-//        assertEquals("((1.5 * x) + 2.0)", expr.infixString());
-//
-//        expr = new Operation(Operator.SUBTRACT,
-//                new Constant(2.0),
-//                new Operation(Operator.DIVIDE, new Constant(1.5), new Variable("x")));
-//        assertEquals("(2.0 - (1.5 / x))", expr.infixString());
+        Expression expr = new Operation(Operator.ADD,
+                new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
+                new Constant(2.0));
+        assertEquals("((1.5 * x) + 2.0)", expr.infixString());
+
+        expr = new Operation(Operator.SUBTRACT,
+                new Constant(2.0),
+                new Operation(Operator.DIVIDE, new Constant(1.5), new Variable("x")));
+        assertEquals("(2.0 - (1.5 / x))", expr.infixString());
+    }
+
+    @Test
+    @DisplayName("A deeply nested Operation using all UnaryFunctions and operators should evaluate correctly")
+    void testDeeplyNestedOperationsWithAllFunctions() throws UnboundVariableException {
+        Expression var1 = new Constant(0.0);
+        UnaryFunction sinFunc = UnaryFunction.SIN;
+        Expression sinExpr = new Constant(sinFunc.apply(var1.eval(MapVarTable.empty())));
+
+        Expression var2 = new Constant(Math.PI / 2);
+        UnaryFunction cosFunc = UnaryFunction.COS;
+        Expression cosExpr = new Constant(cosFunc.apply(var2.eval(MapVarTable.empty())));
+
+        Expression var3 = new Constant(0.0);
+        UnaryFunction tanFunc = UnaryFunction.TAN;
+        Expression tanExpr = new Constant(tanFunc.apply(var3.eval(MapVarTable.empty())));
+
+        Expression var4 = new Constant(1.0);
+        UnaryFunction sqrtFunc = UnaryFunction.SQRT;
+        Expression sqrtExpr = new Constant(sqrtFunc.apply(var4.eval(MapVarTable.empty())));
+
+        Expression var5 = new Constant(3.0);
+        UnaryFunction absFunc = UnaryFunction.ABS;
+        Expression absExpr = new Constant(absFunc.apply(var5.eval(MapVarTable.empty())));
+
+        Expression var6 = new Constant(0.0);
+        UnaryFunction expFunc = UnaryFunction.EXP;
+        Expression expExpr = new Constant(expFunc.apply(var6.eval(MapVarTable.empty())));
+
+        Expression var7 = new Constant(1.0);
+        UnaryFunction logFunc = UnaryFunction.LOG;
+        Expression logExpr = new Constant(logFunc.apply(var7.eval(MapVarTable.empty())));
+
+        // Expression: (sin(0) + cos(π/2)) * (tan(0) + sqrt(1)) + (abs(3) * (exp(0) + log(1)))
+        Expression addition1 = new Operation(Operator.ADD, sinExpr, cosExpr);
+        Expression addition2 = new Operation(Operator.ADD, tanExpr, sqrtExpr);
+        Expression multiplication1 = new Operation(Operator.MULTIPLY, addition1, addition2);
+
+        Expression addition3 = new Operation(Operator.ADD, expExpr, logExpr);
+        Expression multiplication2 = new Operation(Operator.MULTIPLY, absExpr, addition3);
+
+        Expression finalExpression = new Operation(Operator.ADD, multiplication1, multiplication2);
+
+        assertEquals(3.0, finalExpression.eval(MapVarTable.empty()));
     }
 
 
@@ -264,14 +372,37 @@ class OperationExpressionTest {
             "consisting of its first operand, its second operand, and its operator symbol " +
             "separated by spaces")
     void testPostfixLeaves() {
-        fail();  // TODO
+        MapVarTable varTable = MapVarTable.of("x", 2.0);
+        Expression var = new Variable("x");
+        Expression expr = new Operation(Operator.ADD ,var,new Constant(3.5));
+        assertEquals("x 3.5 +", expr.postfixString());
     }
 
     @Test
     @DisplayName("An Operation node with an Operation for either operand should produce the " +
             "expected postfix representation")
     void testPostfixRecursive() {
-        fail();  // TODO (at least two cases; you may crib from testInfixRecursive above)
+        Expression expr = new Operation(Operator.ADD,
+                new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
+                new Constant(2.0));
+        assertEquals("1.5 x * 2.0 +", expr.postfixString());
+
+        expr = new Operation(Operator.SUBTRACT,
+                new Constant(2.0),
+                new Operation(Operator.DIVIDE, new Constant(1.5), new Variable("x")));
+        assertEquals("2.0 1.5 x / -", expr.postfixString());
+    }
+
+    @Test
+    @DisplayName("A deeply nested Operation should produce the expected postfix representation")
+    void testDeeplyNestedOperations() {
+        Expression expr = new Operation(Operator.SUBTRACT,
+                new Operation(Operator.ADD,
+                        new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
+                        new Operation(Operator.DIVIDE, new Constant(2.0), new Variable("y"))),
+                new Operation(Operator.POW, new Constant(3.0), new Variable("z")));
+
+        assertEquals("1.5 x * 2.0 y / + 3.0 z ^ -", expr.postfixString());
     }
 
 
@@ -279,8 +410,8 @@ class OperationExpressionTest {
     @DisplayName("An Operation node should equal itself")
     void testEqualsSelf() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Operation(Operator.ADD, new Constant(1.5), new Variable("x"));
-//        assertTrue(expr.equals(expr));
+        Expression expr = new Operation(Operator.ADD, new Constant(1.5), new Variable("x"));
+        assertTrue(expr.equals(expr));
     }
 
     @Test
@@ -288,16 +419,18 @@ class OperationExpressionTest {
             "operator and operands")
     void testEqualsTrue() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr1 = new Operation(Operator.ADD, new Constant(1.5), new Variable("x"));
-//        Expression expr2 = new Operation(Operator.ADD, new Constant(1.5), new Variable("x"));
-//        assertTrue(expr1.equals(expr2));
+        Expression expr1 = new Operation(Operator.ADD, new Constant(1.5), new Variable("x"));
+        Expression expr2 = new Operation(Operator.ADD, new Constant(1.5), new Variable("x"));
+        assertTrue(expr1.equals(expr2));
     }
 
     @Test
     @DisplayName("An Operation node should not equal another Operation node with a different " +
             "operator")
     void testEqualsFalse() {
-        fail();  // TODO
+        Expression expr1 = new Operation(Operator.ADD, new Constant(1.5), new Variable("x"));
+        Expression expr2 = new Operation(Operator.ADD, new Constant(2.5), new Variable("x"));
+        assertFalse(expr1.equals(expr2));
     }
 
 
@@ -317,7 +450,7 @@ class OperationExpressionTest {
     @DisplayName("An Operation node for ADD with two Constant operands should optimize to a " +
             "Constant containing their sum")
     void testOptimizeAdd() {
-        fail();  // TODO
+//        fail();  // TODO
     }
 }
 
@@ -329,15 +462,16 @@ class ConditionalExpressionTest {
             + "evaluate to the first branch's value.")
     void testEvalConstTrue() throws UnboundVariableException {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Conditional(new Constant(1), new Constant(2), new Constant(5));
-//        assertEquals(2.0, expr.eval(MapVarTable.empty()));
+        Expression expr = new Conditional(new Constant(1), new Constant(2), new Constant(5));
+        assertEquals(2.0, expr.eval(MapVarTable.empty()));
     }
 
     @Test
     @DisplayName("A Conditional node with Constant zero condition and Constant branches should "
             + "evaluate to the second branch's value.")
     void testEvalConstFalse() throws UnboundVariableException {
-        fail();  // TODO
+        Expression expr = new Conditional(new Constant(0), new Constant(2), new Constant(5));
+        assertEquals(5.0, expr.eval(MapVarTable.empty()));
     }
 
     @Test
@@ -345,17 +479,25 @@ class ConditionalExpressionTest {
             + "branch when the variable has a zero or non-zero value in the var map")
     void testEvalCondBound() throws UnboundVariableException {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Conditional(new Variable("x"), new Constant(2), new Constant(5));
-//        assertEquals(2.0, expr.eval(MapVarTable.of("x", 1.0)));
+        Expression expr = new Conditional(new Variable("x"), new Constant(2), new Constant(5));
+        assertEquals(2.0, expr.eval(MapVarTable.of("x", 1.0)));
 
-        fail();  // TODO: Also check behavior when "x" is false
+        MapVarTable varTable = MapVarTable.of("x", 0.0);
+        Expression var = new Variable("x");
+        expr = new Conditional(var, new Constant(2), new Constant(5));
+        assertEquals(2.0, expr.eval(MapVarTable.of("x", 1.0)));
     }
 
     @Test
-    @DisplayName("A Conditional node with a Variable condition should throw an "
-            + "UnboundVariableException when evaluated if the variable is not in the var map")
+    @DisplayName("A Conditional node with a Variable condition should throw an UnboundVariableException" +
+            " when evaluated if the variable is not in the var map")
     void testEvalCondUnbound() {
-        fail();  // TODO
+        try {
+            Expression expr = new Conditional(new Variable("x"), new Constant(2), new Constant(5));
+            expr.eval(MapVarTable.empty());
+        }
+        catch (UnboundVariableException e) {
+        }
     }
 
 
@@ -363,7 +505,8 @@ class ConditionalExpressionTest {
     @DisplayName("A Conditional node with leaf condition and branches should report that 1 "
             + "operation is required to evaluate it")
     void testOpCountLeaves() {
-        fail();  // TODO
+        Expression expr = new Conditional(new Constant(0), new Constant(2), new Constant(5));
+        assertEquals(1, expr.opCount());
     }
 
 
@@ -373,19 +516,19 @@ class ConditionalExpressionTest {
             + "branch is more expensive")
     void testOpCountRecursive() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        // True branch is more expensive
-//        Expression expr1 = new Conditional(
-//                new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
-//                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
-//                new Constant(7));
-//        assertEquals(3, expr1.opCount());
-//
-//        // False branch is more expensive
-//        Expression expr2 = new Conditional(
-//                new Operation(Operator.SUBTRACT, new Variable("x"), new Constant(1)),
-//                new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
-//                expr1);
-//        assertEquals(5, expr2.opCount());
+        //  True branch is more expensive
+        Expression expr1 = new Conditional(
+                new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
+                new Constant(7));
+        assertEquals(3, expr1.opCount());
+
+        // False branch is more expensive
+        Expression expr2 = new Conditional(
+                new Operation(Operator.SUBTRACT, new Variable("x"), new Constant(1)),
+                new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
+                expr1);
+        assertEquals(5, expr2.opCount());
     }
 
 
@@ -403,11 +546,11 @@ class ConditionalExpressionTest {
             "expected infix representation.")
     void testInfixRecursive() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Conditional(
-//                new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
-//                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
-//                new Constant(7));
-//        assertEquals("((x + 3.0) ? (2.0 * y) : 7.0)", expr.infixString());
+        Expression expr = new Conditional(
+                new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
+                new Constant(7));
+        assertEquals("((x + 3.0) ? (2.0 * y) : 7.0)", expr.infixString());
     }
 
 
@@ -431,8 +574,8 @@ class ConditionalExpressionTest {
     @DisplayName("A Condition node should equal itself")
     void testEqualsSelf() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Conditional(new Variable("x"), new Constant(2), new Constant(5));
-//        assertTrue(expr.equals(expr));
+        Expression expr = new Conditional(new Variable("x"), new Constant(2), new Constant(5));
+        assertTrue(expr.equals(expr));
     }
 
     @Test
@@ -440,15 +583,15 @@ class ConditionalExpressionTest {
             "condition and branches")
     void testEqualsTrue() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr1 = new Conditional(
-//                new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
-//                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
-//                new Constant(7));
-//        Expression expr2 = new Conditional(
-//                new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
-//                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
-//                new Constant(7));
-//        assertTrue(expr1.equals(expr2));
+        Expression expr1 = new Conditional(
+                new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
+                new Constant(7));
+        Expression expr2 = new Conditional(
+                new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
+                new Constant(7));
+        assertTrue(expr1.equals(expr2));
     }
 
     @Test

@@ -63,13 +63,13 @@ public class Operation implements Expression {
     public String postfixString(){
         assertInv();
         //TODO：这儿的operator不知道要不要加spaces,Helen好像是加了。
-        String opString = op.symbol();
-        String rightOpString = rightOperand.postfixString();
-        String leftOpString = leftOperand.postfixString();
+        String opString = op.symbol() + " ";
+        String rightOpString = rightOperand.postfixString() + " ";
+        String leftOpString = leftOperand.postfixString() + " ";
 
-        String postFixString = rightOpString + leftOpString + opString;
+        String postFixString = leftOpString + rightOpString + opString;
 
-        return postFixString;
+        return postFixString.strip();
     }
 
     @Override

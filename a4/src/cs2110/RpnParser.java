@@ -48,25 +48,26 @@ public class RpnParser {
             }
 
             if (token instanceof Token.Operator) {
+                Token.Operator operatorToken = (Token.Operator) token;
                 try {
-                    Token.Operator operatorToken = (Token.Operator) token;
-                    cs2110.Operator op = operatorToken.opValue();
-
                     Expression right = stack.pop();
                     Expression left = stack.pop();
-                    Expression Operation = new Operation(op, left, right);
+                    Expression Operation = new Operation(operatorToken.opValue(), left, right);
 
                     stack.push(Operation);
                 } catch (NoSuchElementException e) {
                     throw new IncompleteRpnException(exprString, stack.size());
                 }
             }
-                if (token instanceof Token.Variable) {
-                    Token.Variable variableToken = (Token.Variable) token;
-                    stack.push(new Variable(variableToken.value()));
-                }
 
-                if (token instanceof Token.CondOp) {
+            if (token instanceof Token.Variable) {
+                Token.Variable variableToken = (Token.Variable) token;
+                stack.push(new Variable(variableToken.value()));
+            }
+
+            if (token instanceof Token.CondOp) {
+                //TODO 加了一个try catch
+                try {
                     Expression conditionBranch = stack.pop();
                     Expression trueBranch = stack.pop();
                     Expression falseBranch = stack.pop();
@@ -74,27 +75,31 @@ public class RpnParser {
                     Expression Conditional = new Conditional(conditionBranch, trueBranch, falseBranch);
 
                     stack.push(Conditional);
-                }
-
-                if (token instanceof Token.Function) {
-                    try {
-                        Token.Function functionToken = (Token.Function) token;
-                        UnaryFunction func = funcDefs.get(functionToken.name());
-                        Expression input = stack.pop();
-                        Expression function = new Application(func, input);
-
-                        stack.push(function);
-                    } catch (AssertionError e){
-                        throw new UndefinedFunctionException(funcDefs.toString());
-                    }
+                } catch (NoSuchElementException e) {
+                    throw new IncompleteRpnException(exprString, stack.size());
                 }
             }
+
+            if (token instanceof Token.Function) {
+                try {
+                    Token.Function functionToken = (Token.Function) token;
+                    UnaryFunction func = funcDefs.get(functionToken.name());
+                    Expression input = stack.pop();
+                    Expression function = new Application(func, input);
+
+                    stack.push(function);
+                } catch (AssertionError e) {
+                    throw new UndefinedFunctionException(funcDefs.toString());
+                }
+            }
+        }
         // TODO: Return the overall expression node.  (This might also be a good place to check that
         //  the string really did correspond to a single expression.)
         //  __DONE__
-        Expression result = stack.pop();
-        if (stack.isEmpty()) {
-            return result;
+
+        //TODO: 浅改了一下，逻辑是一样的
+        if (stack.size() == 1) {
+            return stack.pop();
         } else {
             throw new IncompleteRpnException(exprString, stack.size());
         }

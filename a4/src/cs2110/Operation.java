@@ -4,19 +4,31 @@ import java.util.Set;
 
 public class Operation implements Expression {
 
+    /**
+     * The operator.
+     */
     private Operator op;
-    private Expression leftOperand;
-    private Expression rightOperand;
-    int opCount = 1;
 
     /**
-     * Create a node representing the value `value`.
+     * The left operand of the operator.
+     */
+    private Expression leftOperand;
+
+    /**
+     * The right operand of the operator.
+     */
+    private Expression rightOperand;
+
+    //TODO：这儿不知道需不需要opCount,还是在后面的opCount()里直接加1.
+    private int opCount = 1;
+
+    /**
+     * Create an operation with the left operand, the right operand and the operator.
      */
     public Operation(Operator op, Expression leftOperand, Expression rightOperand) {
         this.op = op;
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
-        this.opCount = opCount;
     }
 
     /**
@@ -29,7 +41,7 @@ public class Operation implements Expression {
     }
 
     /**
-     * Return this node's value.
+     * Evaluate the operation by calling operate method on left operant and right operant.
      */
     @Override
     public double eval(VarTable vars) throws UnboundVariableException{
@@ -50,13 +62,13 @@ public class Operation implements Expression {
     @Override
     public String postfixString(){
         assertInv();
+        //TODO：这儿的operator不知道要不要加spaces,Helen好像是加了。
         String opString = op.symbol();
         String rightOpString = rightOperand.postfixString();
-        String leftOpString = rightOperand.postfixString();
+        String leftOpString = leftOperand.postfixString();
 
         String postFixString = rightOpString + leftOpString + opString;
 
-        assertInv();
         return postFixString;
     }
 
@@ -87,7 +99,6 @@ public class Operation implements Expression {
 
     @Override
     public boolean equals(Object other) {
-        Operation otherOperation = (Operation) other;
 
         if (other == null || getClass() != other.getClass()) {
             return false;
@@ -96,6 +107,8 @@ public class Operation implements Expression {
         if (this == other) {
             return true;
         }
+
+        Operation otherOperation = (Operation) other;
 
         return op.equals(otherOperation.op) &&
                 leftOperand.equals(otherOperation.leftOperand) &&

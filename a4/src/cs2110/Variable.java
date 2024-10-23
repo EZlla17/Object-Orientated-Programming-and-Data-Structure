@@ -71,8 +71,8 @@ public class Variable implements Expression{
         if (other == null || other.getClass() != this.getClass()) {
             return false;
         }
-        Variable c = (Variable) other;
-        return name.equals(c.name);
+        Variable otherVariable = (Variable) other;
+        return name.equals(otherVariable.name);
     }
 
 

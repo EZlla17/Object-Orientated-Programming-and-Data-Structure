@@ -3,10 +3,13 @@ package cs2110;
 import java.util.Set;
 
 public class Conditional implements Expression{
-    Expression trueBranch;
-    Expression falseBranch;
-    Expression condition;
-    int opCount = 0;
+    private Expression trueBranch;
+    private Expression falseBranch;
+    private Expression condition;
+    //TODO 我这儿不是很清楚。document上写的是The number of “operations” represented by a Conditional tree should be
+    // counted in the worst case; it should include the cost of evaluating the condition（这儿的意思是condition cost是1吗）,
+    // plus the cost of the more expensive branch, plus 1 for the action of selecting between them.
+    private int opCount = 0;
     /**
      * Create a node representing the value `value`.
      */

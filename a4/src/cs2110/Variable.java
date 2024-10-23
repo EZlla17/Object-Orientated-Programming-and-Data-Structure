@@ -85,7 +85,6 @@ public class Variable implements Expression{
 
     @Override
     public Set<String> dependencies() {
-        // TODO
-        throw new RuntimeException();
+        return Set.of(name);
     }
 }

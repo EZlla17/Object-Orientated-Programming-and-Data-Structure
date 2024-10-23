@@ -66,7 +66,6 @@ public class RpnParser {
             }
 
             if (token instanceof Token.CondOp) {
-                //TODO 加了一个try catch
                 try {
                     Expression conditionBranch = stack.pop();
                     Expression trueBranch = stack.pop();
@@ -97,7 +96,6 @@ public class RpnParser {
         //  the string really did correspond to a single expression.)
         //  __DONE__
 
-        //TODO: 浅改了一下，逻辑是一样的
         if (stack.size() == 1) {
             return stack.pop();
         } else {

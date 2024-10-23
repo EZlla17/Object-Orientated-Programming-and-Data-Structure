@@ -1,5 +1,6 @@
 package cs2110;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Operation implements Expression {
@@ -93,8 +94,10 @@ public class Operation implements Expression {
 
     @Override
     public Set<String> dependencies(){
-        // TODO
-        throw new RuntimeException();
+        Set<String> newSet = new HashSet<>();
+        newSet.addAll(leftOperand.dependencies());
+        newSet.addAll(rightOperand.dependencies());
+        return newSet;
     }
 
     @Override

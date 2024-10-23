@@ -1,5 +1,6 @@
 package cs2110;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Conditional implements Expression{
@@ -46,7 +47,7 @@ public class Conditional implements Expression{
      */
     @Override
     public int opCount(){
-
+        //TODO 这个不确定，需要跟rose对一下。
         int conditionCount = condition.opCount();
 
         int branchCount = (trueBranch.opCount() >= falseBranch.opCount())? trueBranch.opCount(): falseBranch.opCount();
@@ -80,8 +81,11 @@ public class Conditional implements Expression{
     }
 
     public Set<String> dependencies(){
-        // TODO
-        throw new RuntimeException();
+        Set<String> newSet = new HashSet<>();
+        newSet.addAll(trueBranch.dependencies());
+        newSet.addAll(falseBranch.dependencies());
+        newSet.addAll(condition.dependencies());
+        return newSet;
     }
 
     @Override

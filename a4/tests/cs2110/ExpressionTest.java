@@ -15,14 +15,12 @@ class ConstantExpressionTest {
         assertEquals(1.5, expr.eval(MapVarTable.empty()));
     }
 
-
     @Test
     @DisplayName("A Constant node should report that 0 operations are required to evaluate it")
     void testOpCount() {
         Expression expr = new Constant(1.5);
         assertEquals(0, expr.opCount());
     }
-
 
     @Test
     @DisplayName("A Constant node should produce an infix representation with just its value (as " +
@@ -538,7 +536,11 @@ class ConditionalExpressionTest {
             + "its true branch, the ':' symbol surrounded by spaces, and its false branch, all "
             + "enclosed in parentheses")
     void testInfixLeaves() {
-        fail();  // TODO
+        Expression expr1 = new Conditional(new Constant(1.0), new Constant(2.0), new Constant(5.0));
+        assertEquals("(1.0 ? 2.0 : 5.0)", expr1.infixString());
+
+        Expression expr2 = new Conditional(new Variable("x"), new Constant(2.0), new Constant(5.0));
+        assertEquals("(x ? 2.0 : 5.0)", expr2.infixString());
     }
 
     @Test
@@ -546,11 +548,27 @@ class ConditionalExpressionTest {
             "expected infix representation.")
     void testInfixRecursive() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-        Expression expr = new Conditional(
+        Expression expr1 = new Conditional(
                 new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
                 new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
                 new Constant(7));
-        assertEquals("((x + 3.0) ? (2.0 * y) : 7.0)", expr.infixString());
+        assertEquals("((x + 3.0) ? (2.0 * y) : 7.0)", expr1.infixString());
+
+        UnaryFunction sinFunction = UnaryFunction.SIN;
+        Expression sinExpr = new Constant(sinFunction.apply(0.0));
+        Expression expr2 = new Conditional(sinExpr, new Constant(10.0), new Constant(20.0));
+        assertEquals("(0.0 ? 10.0 : 20.0)", expr2.infixString());
+
+        Expression operationExpr = new Operation(Operator.MULTIPLY, new Constant(2.0), new Variable("x"));
+        Expression expr3 = new Conditional(operationExpr, new Constant(3.0), new Constant(6.0));
+        assertEquals("((2.0 * x) ? 3.0 : 6.0)", expr3.infixString());
+
+        UnaryFunction cosFunction = UnaryFunction.COS;
+        Expression cosExpr = new Constant(cosFunction.apply(Math.PI));
+        Expression trueBranchExpr = new Operation(Operator.ADD, new Constant(2.0), new Variable("y"));
+        Expression falseBranchExpr = new Operation(Operator.SUBTRACT, new Constant(5.0), new Variable("z"));
+        Expression expr4 = new Conditional(cosExpr, trueBranchExpr, falseBranchExpr);
+        assertEquals("(-1.0 ? (2.0 + y) : (5.0 - z))", expr4.infixString());
     }
 
 
@@ -559,16 +577,38 @@ class ConditionalExpressionTest {
             + "representation consisting of its condition, its true branch, its false branch, and "
             + "the '?:' symbol, separated by spaces")
     void testPostfixLeaves() {
-        fail();  // TODO
+        Expression expr1 = new Conditional(new Constant(1.0), new Constant(2.0), new Constant(5.0));
+        assertEquals("1.0 2.0 5.0 ?:", expr1.postfixString());
+
+        Expression expr2 = new Conditional(new Variable("x"), new Constant(2.0), new Constant(5.0));
+        assertEquals("x 2.0 5.0 ?:", expr2.postfixString());
     }
 
     @Test
     @DisplayName("A Conditional node with Operation condition and branches should produce the "
             + "expected postfix representation")
     void testPostfixRecursive() {
-        fail();  // TODO (hint: use example from handout)
-    }
+        Expression innerConditional = new Conditional(new Constant(1.0),
+                new Constant(10.0), new Constant(20.0));
+        Expression expr1 = new Conditional(new Constant(0.0), innerConditional, new Constant(5.0));
+        assertEquals("0.0 1.0 10.0 20.0 ?: 5.0 ?:", expr1.postfixString());
 
+        UnaryFunction sinFunction = UnaryFunction.SIN;
+        Expression sinExpr = new Constant(sinFunction.apply(0.0));
+        Expression expr2 = new Conditional(sinExpr, new Constant(10.0), new Constant(20.0));
+        assertEquals("0.0 10.0 20.0 ?:", expr2.postfixString());
+
+        UnaryFunction cosFunction = UnaryFunction.COS;
+        Expression cosExpr = new Constant(cosFunction.apply(Math.PI));  // cos(π) = -1
+        Expression trueBranchExpr = new Operation(Operator.ADD, new Constant(2.0), new Variable("y"));
+        Expression falseBranchExpr = new Operation(Operator.SUBTRACT, new Constant(5.0), new Variable("z"));
+        Expression expr3 = new Conditional(cosExpr, trueBranchExpr, falseBranchExpr);
+        assertEquals("-1.0 2.0 y + 5.0 z - ?:", expr3.postfixString());
+
+        Expression operationExpr = new Operation(Operator.MULTIPLY, new Constant(2.0), new Variable("x"));
+        Expression expr4 = new Conditional(operationExpr, new Constant(3.0), new Constant(6.0));
+        assertEquals("2.0 x * 3.0 6.0 ?:", expr4.postfixString());
+    }
 
     @Test
     @DisplayName("A Condition node should equal itself")
@@ -598,14 +638,19 @@ class ConditionalExpressionTest {
     @DisplayName("A Condition node should not equal another Condition node with a different " +
             "condition")
     void testEqualsFalseCondition() {
-        fail();  // TODO
+        Expression expr1 = new Conditional(new Constant(0),new Constant(1),new Constant(3));
+        Expression expr2 = new Conditional(new Constant(1),new Constant(1),new Constant(3));
+
+        assertFalse(expr1.equals(expr2));
     }
 
     @Test
     @DisplayName("A Condition node should not equal another Condition node with a different " +
             "branch")
     void testEqualsFalseBranch() {
-        fail();  // TODO
+        Expression expr1 = new Conditional(new Constant(0),new Constant(1),new Constant(2));
+        Expression expr2 = new Conditional(new Constant(0),new Constant(1),new Constant(3));
+        assertFalse(expr1.equals(expr2));
     }
 
 
@@ -630,13 +675,13 @@ class ConditionalExpressionTest {
     @DisplayName("A Condition node with Constant condition should optimize to its appropriate "
             + "optimized branch")
     void testOptimizeConstCondition() {
-        fail();  // TODO
+//        fail();  // TODO
     }
 
     @Test
     @DisplayName("A Condition node with Constant condition should optimize to its appropriate "
             + "optimized branch")
     void testOptimizeExprCondition() {
-        fail();  // TODO
+//        fail();  // TODO
     }
 }

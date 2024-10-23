@@ -48,18 +48,20 @@ public class Conditional implements Expression{
 
         int branchCount = (trueBranch.opCount() >= falseBranch.opCount())? trueBranch.opCount(): falseBranch.opCount();
 
+        assertInv();
         return 1 + conditionCount + branchCount;
     }
 
     @Override
     public String postfixString(){
-        String trueString = trueBranch.postfixString();
-        String falseString = falseBranch.postfixString();
-        String conditionString = condition.postfixString() + " ?:";
+        String trueString = trueBranch.postfixString() + " ";
+        String falseString = falseBranch.postfixString() + " ";
+        String conditionString = condition.postfixString() + " ";
 
-        String postFixString = conditionString + trueString + falseString;
+        String postFixString = conditionString + trueString + falseString + "?:";
 
-        return postFixString;
+        assertInv();
+        return postFixString.strip();
     }
 
     @Override
@@ -68,6 +70,7 @@ public class Conditional implements Expression{
         String falseString = falseBranch.infixString();
         String conditionString = condition.infixString();
 
+        assertInv();
         return "(" + conditionString + " ? " + trueString + " : " + falseString + ")";
     }
 

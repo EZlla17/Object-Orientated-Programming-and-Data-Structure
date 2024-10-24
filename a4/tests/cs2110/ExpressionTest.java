@@ -779,7 +779,7 @@ class ConditionalExpressionTest {
     }
 
     @Test
-    @DisplayName("A Condition node with Constant condition should optimize to its appropriate "
+    @DisplayName("A Condition node with Expression condition should optimize to its appropriate "
             + "optimized branch")
     void testOptimizeExprCondition() {
         Expression expr = new Conditional(
@@ -788,6 +788,54 @@ class ConditionalExpressionTest {
                 new Variable("y"));
         MapVarTable varTable = MapVarTable.of("y", 2.0);
         assertEquals(expr.optimize(varTable),new Constant(2));
+    }
+
+    @Test
+    @DisplayName("A Condition node with Constant branches should optimize to its appropriate "
+            + "optimized branch")
+    void testOptimizeConstBranch() {
+        Expression expr = new Conditional(
+                new Operation(Operator.MULTIPLY, new Constant(1), new Constant(0)),
+                new Constant(1),
+                new Constant(2));
+        MapVarTable varTable = MapVarTable.empty();
+        assertEquals(expr.optimize(varTable),new Constant(2));
+    }
+
+    @Test
+    @DisplayName("A Condition node with Variable branches should optimize to its appropriate "
+            + "optimized branch")
+    void testOptimizeVarBranch() {
+        Expression expr = new Conditional(
+                new Operation(Operator.MULTIPLY, new Constant(1), new Constant(0)),
+                new Variable("x"),
+                new Variable("y"));
+        MapVarTable varTable = MapVarTable.of("y",2);
+        assertEquals(expr.optimize(varTable),new Constant(2));
+    }
+
+    @Test
+    @DisplayName("A Condition node with Operation branches should optimize to its appropriate "
+            + "optimized branch")
+    void testOptimizeOpBranch() {
+        Expression expr = new Conditional(
+                new Operation(Operator.MULTIPLY, new Constant(1), new Constant(0)),
+                new Operation(Operator.ADD, new Constant(1), new Constant(0)),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Constant(3)));
+        MapVarTable varTable = MapVarTable.empty();
+        assertEquals(expr.optimize(varTable),new Constant(6));
+    }
+
+    @Test
+    @DisplayName("A Condition node with Conditional branches should optimize to its appropriate "
+            + "optimized branch")
+    void testOptimizeConditionBranch() {
+        Expression expr = new Conditional(
+                new Operation(Operator.MULTIPLY, new Constant(1), new Constant(0)),
+                new Conditional(new Constant(1), new Constant(2), new Constant(3)),
+                new Conditional(new Constant(0), new Constant(5), new Constant(6)));
+        MapVarTable varTable = MapVarTable.empty();
+        assertEquals(expr.optimize(varTable),new Constant(6));
     }
 
 }

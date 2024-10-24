@@ -90,7 +90,8 @@ public class Operation implements Expression {
     public Expression optimize(VarTable vars){
         leftOperand=leftOperand.optimize(vars);
         rightOperand=rightOperand.optimize(vars);
-        if (rightOperand instanceof Constant && leftOperand instanceof Constant){
+        if (rightOperand instanceof Constant
+                && leftOperand instanceof Constant){
             try {
                 return new Constant(eval(vars));
             } catch (UnboundVariableException e) {

@@ -79,9 +79,9 @@ public class Conditional implements Expression{
     }
 
     public Expression optimize(VarTable vars){
-        trueBranch=trueBranch.optimize(vars);
-        falseBranch=falseBranch.optimize(vars);
-        condition=condition.optimize(vars);
+        trueBranch = trueBranch.optimize(vars);
+        falseBranch = falseBranch.optimize(vars);
+        condition = condition.optimize(vars);
         if (condition instanceof Constant){
             try{
                 if (condition.eval(vars) == 0) {

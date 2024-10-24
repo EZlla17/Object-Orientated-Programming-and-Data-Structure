@@ -7,6 +7,7 @@ public class Conditional implements Expression{
     private Expression trueBranch;
     private Expression falseBranch;
     private Expression condition;
+
     /**
      * Create a node representing the value `value`.
      */
@@ -43,10 +44,10 @@ public class Conditional implements Expression{
     @Override
     public int opCount(){
         //TODO 这个不确定，需要跟rose对一下。__Resolve__
-        int opCount = condition.opCount() + Math.max(trueBranch.opCount(), falseBranch.opCount());
+        int opCount = 1 + condition.opCount() + Math.max(trueBranch.opCount(), falseBranch.opCount());
 
         assertInv();
-        return opCount + 1;
+        return opCount;
     }
 
     @Override

@@ -22,7 +22,7 @@ class RpnParserTest {
     void testParseVariable() throws IncompleteRpnException, UndefinedFunctionException {
         Expression expr = RpnParser.parse("x", Map.of());
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        assertEquals(new Variable("x"), expr);
+        assertEquals(new Variable("x"), expr);
     }
 
     @Test
@@ -30,15 +30,29 @@ class RpnParserTest {
             "evaluating to the expected value")
     void testParseOperation()
             throws UnboundVariableException, IncompleteRpnException, UndefinedFunctionException {
+
+        //operands are constant
         Expression expr = RpnParser.parse("1 1 +", Map.of());
-        // TODO: Uncomment this test
-//        assertInstanceOf(Operation.class, expr);
+        assertInstanceOf(Operation.class, expr);
         assertEquals(2.0, expr.eval(MapVarTable.empty()));
 
         // TODO: This is not a very thorough test!  Both operands are the same, and the operator is
         // commutative.  Write additional test cases that don't have these properties.
         // You should also write a test case that requires recursive evaluation of the operands.
 
+        //At least one operand is identifier and in VarTable.
+        Expression expr2 = RpnParser.parse("x 1 +", Map.of());
+        assertInstanceOf(Operation.class, expr);
+        assertEquals(3.0, expr2.eval(MapVarTable.of("x", 2.0)));
+
+        //At least one operand is operation.
+        Expression expr3 = RpnParser.parse("x 1 + 2 *", Map.of());
+        assertInstanceOf(Operation.class, expr);
+        assertEquals(6.0, expr3.eval(MapVarTable.of("x", 2.0)));
+
+        Expression expr4 = RpnParser.parse("x 1 + 2 3 * +", Map.of());
+        assertInstanceOf(Operation.class, expr);
+        assertEquals(9.0, expr3.eval(MapVarTable.of("x", 2.0)));
     }
 
     @Test

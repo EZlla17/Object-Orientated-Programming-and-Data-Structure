@@ -52,7 +52,7 @@ class RpnParserTest {
 
         Expression expr4 = RpnParser.parse("x 1 + 2 3 * +", Map.of());
         assertInstanceOf(Operation.class, expr);
-        assertEquals(9.0, expr3.eval(MapVarTable.of("x", 2.0)));
+        assertEquals(9.0, expr4.eval(MapVarTable.of("x", 2.0)));
     }
 
     @Test

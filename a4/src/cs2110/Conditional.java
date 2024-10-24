@@ -76,8 +76,21 @@ public class Conditional implements Expression{
     }
 
     public Expression optimize(VarTable vars){
-        // TODO
-        throw new RuntimeException();
+        trueBranch=trueBranch.optimize(vars);
+        falseBranch=falseBranch.optimize(vars);
+        condition=condition.optimize(vars);
+        if (condition instanceof Constant){
+            try{
+                if (condition.eval(vars) == 0) {
+                    return falseBranch;
+                } else {
+                    return trueBranch;
+                }
+            } catch (UnboundVariableException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return this;
     }
 
     public Set<String> dependencies(){

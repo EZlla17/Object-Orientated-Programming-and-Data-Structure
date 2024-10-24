@@ -88,8 +88,16 @@ public class Operation implements Expression {
 
     @Override
     public Expression optimize(VarTable vars){
-        // TODO
-        throw new RuntimeException();
+        leftOperand=leftOperand.optimize(vars);
+        rightOperand=rightOperand.optimize(vars);
+        if (rightOperand instanceof Constant && leftOperand instanceof Constant){
+            try {
+                return new Constant(eval(vars));
+            } catch (UnboundVariableException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return this;
     }
 
     @Override

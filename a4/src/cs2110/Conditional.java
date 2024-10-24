@@ -10,7 +10,6 @@ public class Conditional implements Expression{
     //TODO 我这儿不是很清楚。document上写的是The number of “operations” represented by a Conditional tree should be
     // counted in the worst case; it should include the cost of evaluating the condition（这儿的意思是condition cost是1吗）,
     // plus the cost of the more expensive branch, plus 1 for the action of selecting between them.
-    private int opCount = 0;
     /**
      * Create a node representing the value `value`.
      */
@@ -35,10 +34,8 @@ public class Conditional implements Expression{
     @Override
     public double eval(VarTable vars) throws UnboundVariableException {
         if (condition.eval(vars) == 0.0) {
-            opCount += falseBranch.opCount();
             return falseBranch.eval(vars);
         } else {
-            opCount += trueBranch.opCount();
             return trueBranch.eval(vars);
         }
     }
@@ -48,12 +45,9 @@ public class Conditional implements Expression{
     @Override
     public int opCount(){
         //TODO 这个不确定，需要跟rose对一下。
-        int conditionCount = condition.opCount();
+        int result = 1 + condition.opCount() + Math.max(trueBranch.opCount(),falseBranch.opCount());
 
-        int branchCount = (trueBranch.opCount() >= falseBranch.opCount())? trueBranch.opCount(): falseBranch.opCount();
-
-        assertInv();
-        return 1 + conditionCount + branchCount;
+        return result;
     }
 
     @Override

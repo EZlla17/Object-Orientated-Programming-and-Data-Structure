@@ -20,8 +20,6 @@ public class Operation implements Expression {
      */
     private Expression rightOperand;
 
-    //__Resolve__
-    private int opCount = 0;
 
     /**
      * Create an operation with the left operand, the right operand and the operator.
@@ -55,7 +53,7 @@ public class Operation implements Expression {
      */
     @Override
     public int opCount() {
-        opCount += leftOperand.opCount() + rightOperand.opCount() + 1;
+        int opCount = leftOperand.opCount() + rightOperand.opCount() + 1;
         assertInv();
         return opCount;
     }

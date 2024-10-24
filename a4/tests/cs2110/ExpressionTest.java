@@ -622,6 +622,10 @@ class ConditionalExpressionTest {
                 new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
                 expr1);
         assertEquals(5, expr2.opCount());
+
+        Expression expr3 = new Conditional(
+                expr2,expr2,expr1);
+        assertEquals(11, expr3.opCount());
     }
 
 

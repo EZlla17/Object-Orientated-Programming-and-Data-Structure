@@ -55,6 +55,7 @@ public class Operation implements Expression {
      */
     @Override
     public int opCount() {
+        System.out.println("opcount for" + infixString());
         opCount += leftOperand.opCount() + rightOperand.opCount() + 1;
         assertInv();
         return opCount;

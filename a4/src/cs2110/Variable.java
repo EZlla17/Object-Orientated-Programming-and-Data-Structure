@@ -78,8 +78,15 @@ public class Variable implements Expression{
 
     @Override
     public Expression optimize(VarTable vars) {
-        // TODO
-        throw new RuntimeException();
+        if (vars.contains(name)){
+            try {
+                Constant optimize = new Constant(vars.get(name));
+                return optimize;
+            } catch (UnboundVariableException e){
+                throw new RuntimeException(e);
+            }
+        }
+        return this;
     }
 
 

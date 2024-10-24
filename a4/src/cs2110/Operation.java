@@ -20,8 +20,8 @@ public class Operation implements Expression {
      */
     private Expression rightOperand;
 
-    //TODO：这儿不知道需不需要opCount,还是在后面的opCount()里直接加1.
-    private int opCount = 1;
+    //__Resolve__
+    private int opCount = 0;
 
     /**
      * Create an operation with the left operand, the right operand and the operator.
@@ -55,7 +55,7 @@ public class Operation implements Expression {
      */
     @Override
     public int opCount() {
-        opCount += leftOperand.opCount() + rightOperand.opCount();
+        opCount += leftOperand.opCount() + rightOperand.opCount() + 1;
         assertInv();
         return opCount;
     }
@@ -63,14 +63,14 @@ public class Operation implements Expression {
     @Override
     public String postfixString(){
         assertInv();
-        //TODO：这儿的operator不知道要不要加spaces,Helen好像是加了。
-        String opString = op.symbol();
-        String rightOpString = rightOperand.postfixString();
-        String leftOpString = leftOperand.postfixString();
+        //TODO：这儿的operator不知道要不要加spaces,Helen好像是加了。__Resolve__
+        String opString = op.symbol() + " ";
+        String rightOpString = rightOperand.postfixString() + " ";
+        String leftOpString = leftOperand.postfixString() + " ";
 
-        String postFixString = rightOpString + leftOpString + opString;
+        String postFixString = leftOpString + rightOpString + opString;
 
-        return postFixString;
+        return postFixString.strip();
     }
 
     @Override

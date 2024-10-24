@@ -82,7 +82,7 @@ class RpnParserTest {
             throws UnboundVariableException, IncompleteRpnException, UndefinedFunctionException {
         Expression expr = RpnParser.parse("1 2 3 ?:", UnaryFunction.mathDefs());
         // TODO: Uncomment this test
-//        assertInstanceOf(Conditional.class, expr);
+        assertInstanceOf(Conditional.class, expr);
         assertEquals(2.0, expr.eval(MapVarTable.empty()));
 
     }

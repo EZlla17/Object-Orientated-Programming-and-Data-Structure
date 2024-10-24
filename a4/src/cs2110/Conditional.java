@@ -46,6 +46,7 @@ public class Conditional implements Expression{
         //TODO 这个不确定，需要跟rose对一下。__Resolve__
         int opCount = 1 + condition.opCount() + Math.max(trueBranch.opCount(), falseBranch.opCount());
 
+        System.out.println("opcount for" +" " + infixString());
         assertInv();
         return opCount;
     }

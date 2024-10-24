@@ -610,25 +610,25 @@ class ConditionalExpressionTest {
     void testOpCountRecursive() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
         //  True branch is more expensive
-        Expression expr1 = new Conditional(
+        Expression expra = new Conditional(
                 new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
                 new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
                 new Constant(7));
-        assertEquals(3, expr1.opCount());
+        assertEquals(3, expra.opCount());
 
         System.out.println("break");
         // False branch is more expensive
-        Expression expr2 = new Conditional(
+        Expression exprb = new Conditional(
                 new Operation(Operator.SUBTRACT, new Variable("x"), new Constant(1)),
                 new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
-                expr1);
-        System.out.println(expr2.infixString());
-        assertEquals(5, expr2.opCount());
+                expra);
+        System.out.println(exprb.infixString());
+        assertEquals(5, exprb.opCount());
 
-        Expression expr3 = new Conditional(
-               expr1, expr2, expr1);
-        System.out.println(expr2.infixString());
-        assertEquals(9, expr3.opCount());
+        Expression exprc = new Conditional(
+               expra, exprb, expra);
+        System.out.println(exprc.infixString());
+        assertEquals(9, exprc.opCount());
     }
 
 

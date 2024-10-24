@@ -41,23 +41,27 @@ class RpnParserTest {
         // You should also write a test case that requires recursive evaluation of the operands.
 
         //At least one operand is identifier and in VarTable.
-        Expression expr2 = RpnParser.parse("x 1 +", Map.of());
+        Expression expr2 = RpnParser.parse("x 1 -", Map.of());
         assertInstanceOf(Operation.class, expr);
-        assertEquals(3.0, expr2.eval(MapVarTable.of("x", 2.0)));
+        assertEquals(1.0, expr2.eval(MapVarTable.of("x", 2.0)));
 
         //At least one operand is operation.
-        Expression expr3 = RpnParser.parse("x 1 + 2 *", Map.of());
+        Expression expr3 = RpnParser.parse("x 1 + 2 /", Map.of());
         assertInstanceOf(Operation.class, expr);
-        assertEquals(6.0, expr3.eval(MapVarTable.of("x", 2.0)));
+        assertEquals(1.5, expr3.eval(MapVarTable.of("x", 2.0)));
 
         Expression expr4 = RpnParser.parse("x 1 + 2 3 * +", Map.of());
         assertInstanceOf(Operation.class, expr);
         assertEquals(9.0, expr4.eval(MapVarTable.of("x", 2.0)));
 
         //At least one operand is Conditional.
-        Expression expr5 = RpnParser.parse("x 1 + 2 3 * +", Map.of());
+        Expression expr5 = RpnParser.parse("x 3.0 + 2.0 y * 7.0 ?: 2 +", Map.of());
         assertInstanceOf(Operation.class, expr);
-        assertEquals(9.0, expr5.eval(MapVarTable.of("x", 2.0)));
+        assertEquals(4.0, expr5.eval(MapVarTable.of("x", 2.0,"y",1.0)));
+
+        Expression expr6 = RpnParser.parse("x 3.0 + 2.0 y * 7.0 ?: x 0.0 * 2.0 y * 7.0 ?: +", Map.of());
+        assertInstanceOf(Operation.class, expr);
+        assertEquals(9.0, expr6.eval(MapVarTable.of("x", 2.0,"y",1.0)));
     }
 
     @Test

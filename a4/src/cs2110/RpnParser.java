@@ -67,9 +67,9 @@ public class RpnParser {
 
             if (token instanceof Token.CondOp) {
                 try {
-                    Expression conditionBranch = stack.pop();
-                    Expression trueBranch = stack.pop();
                     Expression falseBranch = stack.pop();
+                    Expression trueBranch = stack.pop();
+                    Expression conditionBranch = stack.pop();
 
                     Expression Conditional = new Conditional(conditionBranch, trueBranch, falseBranch);
 

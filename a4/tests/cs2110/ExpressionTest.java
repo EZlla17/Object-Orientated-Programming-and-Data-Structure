@@ -177,11 +177,11 @@ class VariableExpressionTest {
     @Test
     @DisplayName("A Variable node only depends on its name")
     void testDependencies() {
-//        // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Variable("x");
-//        Set<String> deps = expr.dependencies();
-//        assertTrue(deps.contains("x"));
-//        assertEquals(1, deps.size());
+        // TODO: Uncomment this test, adjusting constructor invocations as necessary
+        Expression expr = new Variable("x");
+        Set<String> deps = expr.dependencies();
+        assertTrue(deps.contains("x"));
+        assertEquals(1, deps.size());
     }
 
 
@@ -189,15 +189,17 @@ class VariableExpressionTest {
     @DisplayName("A Variable node should optimize to a Constant if its variable is in the var map")
     void testOptimizeBound() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Variable("x");
-//        Expression opt = expr.optimize(MapVarTable.of("x", 1.5));
-//        assertEquals(new Constant(1.5), opt);
+        Expression expr = new Variable("x");
+        Expression opt = expr.optimize(MapVarTable.of("x", 1.5));
+        assertEquals(new Constant(1.5), opt);
     }
 
     @Test
     @DisplayName("A Variable node should optimize to itself if its variable is not in the var map")
     void testOptimizeUnbound() {
-//        fail();  // TODO
+        Expression expr = new Variable("x");
+        Expression opt = expr.optimize(MapVarTable.of("y", 1.5));
+        assertEquals(expr, opt);
     }
 }
 
@@ -436,11 +438,52 @@ class OperationExpressionTest {
     @DisplayName("An Operation node depends on the dependencies of both of its operands")
     void testDependencies() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Operation(Operator.ADD, new Variable("x"), new Variable("y"));
-//        Set<String> deps = expr.dependencies();
-//        assertTrue(deps.contains("x"));
-//        assertTrue(deps.contains("y"));
-//        assertEquals(2, deps.size());
+        Expression expr = new Operation(Operator.ADD, new Variable("x"), new Variable("y"));
+        Set<String> deps = expr.dependencies();
+        assertTrue(deps.contains("x"));
+        assertTrue(deps.contains("y"));
+        assertEquals(2, deps.size());
+    }
+
+    @Test
+    @DisplayName("An Operation node depends on the dependencies of both of its operands, one of its operands " +
+                 "is Operation node.")
+    void testDependenciesWithOp() {
+        // TODO: Uncomment this test, adjusting constructor invocations as necessary
+        Expression expr = new Operation(Operator.ADD, new Operation(Operator.ADD, new Variable("x"),
+                new Variable("z")), new Variable("y"));
+        Set<String> deps = expr.dependencies();
+        assertTrue(deps.contains("x"));
+        assertTrue(deps.contains("y"));
+        assertTrue(deps.contains("z"));
+        assertEquals(3, deps.size());
+    }
+
+    @Test
+    @DisplayName("An Operation node depends on the dependencies of both of its operands, one of its operands " +
+            "is Constant.")
+    void testDependenciesWithConst() {
+        // TODO: Uncomment this test, adjusting constructor invocations as necessary
+        Expression expr = new Operation(Operator.ADD, new Constant(6), new Variable("y"));
+        Set<String> deps = expr.dependencies();
+        assertTrue(deps.contains("y"));
+        assertEquals(1, deps.size());
+    }
+
+    @Test
+    @DisplayName("An Operation node depends on the dependencies of both of its operands, one of its operands " +
+            "is Constant.")
+    void testDependenciesWithCondition() {
+        // TODO: Uncomment this test, adjusting constructor invocations as necessary
+        Expression expr = new Operation(Operator.ADD, new Variable("x"),
+                new Conditional(new Constant(0),
+                        new Variable("y"),
+                        new Variable("z")));
+        Set <String> deps=expr.dependencies();
+        assertTrue(deps.contains("y"));
+        assertTrue(deps.contains("x"));
+        assertTrue(deps.contains("z"));
+        assertEquals(3, deps.size());
     }
 
 
@@ -448,7 +491,59 @@ class OperationExpressionTest {
     @DisplayName("An Operation node for ADD with two Constant operands should optimize to a " +
             "Constant containing their sum")
     void testOptimizeAdd() {
-//        fail();  // TODO
+        Expression expr = new Operation(Operator.ADD, new Constant(6), new Constant(2));
+        Expression opt = expr.optimize(MapVarTable.empty());
+        assertEquals(new Constant(8), opt);
+    }
+
+    @Test
+    @DisplayName("An Operation node for ADD with two Variable operands. Two Variable operands are in the MapVarTable. "
+            + "Should optimize to a Constant containing their sum")
+    void testOptimizeAddWithVar() {
+        Expression expr = new Operation(Operator.ADD, new Variable("x"), new Variable("y"));
+        Expression opt = expr.optimize(MapVarTable.of("x",1,"y",2));
+        assertEquals(new Constant(3), opt);
+    }
+
+    @Test
+    @DisplayName("An Operation node for ADD with two operands. One of the operands is also Operation")
+    void testOptimizeAddWithOpt() {
+        Expression expr = new Operation(
+                Operator.ADD,
+                new Variable("x"),
+                new Operation(Operator.ADD, new Constant(1), new Constant(2))
+        );
+        Expression opt = expr.optimize(MapVarTable.of("x",1));
+        assertEquals(new Constant(4), opt);
+    }
+
+    @Test
+    @DisplayName("An Operation node for ADD with two operands. One of the operands is Conditional type.")
+    void testOptimizeAddWithCondition() {
+        Expression expr = new Operation(
+                Operator.ADD,
+                new Variable("x"),
+                new Conditional(new Constant(0), new Constant(1),new Constant(2))
+        );
+        Expression opt = expr.optimize(MapVarTable.of("x",1));
+        assertEquals(new Constant(3), opt);
+    }
+
+    @Test
+    @DisplayName("An Operation node for ADD with two Variable operands. One of the two operands are not in the " +
+            "MapVarTable. Will not be optimized.")
+    void testNoOptimize1() {
+        Expression expr = new Operation(Operator.ADD, new Variable("x"), new Variable("y"));
+        Expression opt = expr.optimize(MapVarTable.of("y",2));
+        assertEquals(expr, opt);
+    }
+
+    @DisplayName("An Operation node for ADD with two Variable operands. Both operands are not in the " +
+            "MapVarTable. Will not be optimized.")
+    void testNoOptimize2() {
+        Expression expr = new Operation(Operator.ADD, new Variable("x"), new Variable("y"));
+        Expression opt = expr.optimize(MapVarTable.empty());
+        assertEquals(expr, opt);
     }
 }
 
@@ -659,15 +754,15 @@ class ConditionalExpressionTest {
             + "branches")
     void testDependencies() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
-//        Expression expr = new Conditional(
-//                new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
-//                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
-//                new Variable("z"));
-//        Set<String> deps = expr.dependencies();
-//        assertTrue(deps.contains("x"));
-//        assertTrue(deps.contains("y"));
-//        assertTrue(deps.contains("z"));
-//        assertEquals(3, deps.size());
+        Expression expr = new Conditional(
+                new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
+                new Variable("z"));
+        Set<String> deps = expr.dependencies();
+        assertTrue(deps.contains("x"));
+        assertTrue(deps.contains("y"));
+        assertTrue(deps.contains("z"));
+        assertEquals(3, deps.size());
     }
 
 
@@ -675,13 +770,72 @@ class ConditionalExpressionTest {
     @DisplayName("A Condition node with Constant condition should optimize to its appropriate "
             + "optimized branch")
     void testOptimizeConstCondition() {
-//        fail();  // TODO
+        Expression expr = new Conditional(
+                new Constant(1),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
+                new Variable("z"));
+        MapVarTable varTable = MapVarTable.of("y", 2.0);
+        assertEquals(expr.optimize(varTable),new Constant(4));
     }
 
     @Test
-    @DisplayName("A Condition node with Constant condition should optimize to its appropriate "
+    @DisplayName("A Condition node with Expression condition should optimize to its appropriate "
             + "optimized branch")
     void testOptimizeExprCondition() {
-//        fail();  // TODO
+        Expression expr = new Conditional(
+                new Operation(Operator.MULTIPLY, new Constant(1), new Constant(0)),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
+                new Variable("y"));
+        MapVarTable varTable = MapVarTable.of("y", 2.0);
+        assertEquals(expr.optimize(varTable),new Constant(2));
     }
+
+    @Test
+    @DisplayName("A Condition node with Constant branches should optimize to its appropriate "
+            + "optimized branch")
+    void testOptimizeConstBranch() {
+        Expression expr = new Conditional(
+                new Operation(Operator.MULTIPLY, new Constant(1), new Constant(0)),
+                new Constant(1),
+                new Constant(2));
+        MapVarTable varTable = MapVarTable.empty();
+        assertEquals(expr.optimize(varTable),new Constant(2));
+    }
+
+    @Test
+    @DisplayName("A Condition node with Variable branches should optimize to its appropriate "
+            + "optimized branch")
+    void testOptimizeVarBranch() {
+        Expression expr = new Conditional(
+                new Operation(Operator.MULTIPLY, new Constant(1), new Constant(0)),
+                new Variable("x"),
+                new Variable("y"));
+        MapVarTable varTable = MapVarTable.of("y",2);
+        assertEquals(expr.optimize(varTable),new Constant(2));
+    }
+
+    @Test
+    @DisplayName("A Condition node with Operation branches should optimize to its appropriate "
+            + "optimized branch")
+    void testOptimizeOpBranch() {
+        Expression expr = new Conditional(
+                new Operation(Operator.MULTIPLY, new Constant(1), new Constant(0)),
+                new Operation(Operator.ADD, new Constant(1), new Constant(0)),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Constant(3)));
+        MapVarTable varTable = MapVarTable.empty();
+        assertEquals(expr.optimize(varTable),new Constant(6));
+    }
+
+    @Test
+    @DisplayName("A Condition node with Conditional branches should optimize to its appropriate "
+            + "optimized branch")
+    void testOptimizeConditionBranch() {
+        Expression expr = new Conditional(
+                new Operation(Operator.MULTIPLY, new Constant(1), new Constant(0)),
+                new Conditional(new Constant(1), new Constant(2), new Constant(3)),
+                new Conditional(new Constant(0), new Constant(5), new Constant(6)));
+        MapVarTable varTable = MapVarTable.empty();
+        assertEquals(expr.optimize(varTable),new Constant(6));
+    }
+
 }

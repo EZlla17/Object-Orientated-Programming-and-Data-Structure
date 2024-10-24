@@ -7,7 +7,9 @@ public class Conditional implements Expression{
     private Expression trueBranch;
     private Expression falseBranch;
     private Expression condition;
-
+    //TODO 我这儿不是很清楚。document上写的是The number of “operations” represented by a Conditional tree should be
+    // counted in the worst case; it should include the cost of evaluating the condition（这儿的意思是condition cost是1吗）,
+    // plus the cost of the more expensive branch, plus 1 for the action of selecting between them.
     /**
      * Create a node representing the value `value`.
      */
@@ -37,18 +39,15 @@ public class Conditional implements Expression{
             return trueBranch.eval(vars);
         }
     }
-
     /**
      * Return the number of operation required.
      */
     @Override
     public int opCount(){
-        //TODO 这个不确定，需要跟rose对一下。__Resolve__
-        int opCount = 1 + condition.opCount() + Math.max(trueBranch.opCount(), falseBranch.opCount());
+        //TODO 这个不确定，需要跟rose对一下。
+        int result = 1 + condition.opCount() + Math.max(trueBranch.opCount(),falseBranch.opCount());
 
-        System.out.println("opcount for" +" " + infixString());
-        assertInv();
-        return opCount;
+        return result;
     }
 
     @Override

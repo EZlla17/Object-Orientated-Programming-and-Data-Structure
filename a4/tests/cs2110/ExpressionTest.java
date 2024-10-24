@@ -610,25 +610,22 @@ class ConditionalExpressionTest {
     void testOpCountRecursive() {
         // TODO: Uncomment this test, adjusting constructor invocations as necessary
         //  True branch is more expensive
-        Expression expra = new Conditional(
+        Expression expr1 = new Conditional(
                 new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
                 new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
                 new Constant(7));
-        assertEquals(3, expra.opCount());
+        assertEquals(3, expr1.opCount());
 
-        System.out.println("break");
         // False branch is more expensive
-        Expression exprb = new Conditional(
+        Expression expr2 = new Conditional(
                 new Operation(Operator.SUBTRACT, new Variable("x"), new Constant(1)),
                 new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
-                expra);
-        System.out.println(exprb.infixString());
-        assertEquals(5, exprb.opCount());
+                expr1);
+        assertEquals(5, expr2.opCount());
 
-        Expression exprc = new Conditional(
-               expra, exprb, expra);
-        System.out.println(exprc.infixString());
-        assertEquals(9, exprc.opCount());
+        Expression expr3 = new Conditional(
+                expr2,expr2,expr1);
+        assertEquals(11, expr3.opCount());
     }
 
 
@@ -672,6 +669,7 @@ class ConditionalExpressionTest {
         Expression expr4 = new Conditional(cosExpr, trueBranchExpr, falseBranchExpr);
         assertEquals("(-1.0 ? (2.0 + y) : (5.0 - z))", expr4.infixString());
     }
+
 
     @Test
     @DisplayName("A Condition node with leaf condition and branches should produce a postfix "

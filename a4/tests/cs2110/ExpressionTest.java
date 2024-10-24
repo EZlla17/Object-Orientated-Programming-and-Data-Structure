@@ -770,13 +770,24 @@ class ConditionalExpressionTest {
     @DisplayName("A Condition node with Constant condition should optimize to its appropriate "
             + "optimized branch")
     void testOptimizeConstCondition() {
-//        fail();  // TODO
+        Expression expr = new Conditional(
+                new Constant(1),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
+                new Variable("z"));
+        MapVarTable varTable = MapVarTable.of("y", 2.0);
+        assertEquals(expr.optimize(varTable),new Constant(4));
     }
 
     @Test
     @DisplayName("A Condition node with Constant condition should optimize to its appropriate "
             + "optimized branch")
     void testOptimizeExprCondition() {
-//        fail();  // TODO
+        Expression expr = new Conditional(
+                new Operation(Operator.MULTIPLY, new Constant(1), new Constant(0)),
+                new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
+                new Variable("y"));
+        MapVarTable varTable = MapVarTable.of("y", 2.0);
+        assertEquals(expr.optimize(varTable),new Constant(2));
     }
+
 }

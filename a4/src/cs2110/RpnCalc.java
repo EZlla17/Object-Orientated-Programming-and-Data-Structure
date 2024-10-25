@@ -407,7 +407,69 @@ public class RpnCalc {
     public void doTabulate(Scanner scanner) {
         // TODO (challenge extension): Implement this method according to its specification.
         // Use the helper function `updateExpr()` when appropriate.
-        System.err.println("Sorry, this command is not yet supported.");
+
+        String var="";
+        double lo=0;
+        double hi=0;
+        int n=0;
+
+        try {
+            var= scanner.next();
+            lo = Double.parseDouble(scanner.next());
+            hi = Double.parseDouble(scanner.next());
+            n= Integer.parseInt(scanner.next());
+        } catch (NoSuchElementException | NumberFormatException e) {
+            System.err.println("Improper arguments are passed. Expected: <var> <lo> <hi> <n> [<expr>]");
+        }
+
+        if (n<=0){
+            System.err.println("Improper arguments are passed.");
+            return;
+        }
+
+        if (hi < lo) {
+            System.err.println("Improper arguments are passed.");
+            return;
+        }
+
+        try {
+            if (scanner.hasNext()){
+                String update = scanner.nextLine().trim();
+                if (!update.isEmpty()){
+                    Scanner expression = new Scanner(update);
+                    updateExpr(expression);
+                }
+
+            }
+        } catch (IncompleteRpnException e) {
+            System.err.println("Expression cannot be parsed.");
+            return;
+        } catch (UndefinedFunctionException e){
+            System.err.println("Expression cannot be parsed.");
+            return;
+        }
+
+        double[] values = new double[n];
+        double temp = lo;
+        double add = (hi - lo) / (n - 1);
+        for (int i = 0; i < n; i++) {
+            values[i] = temp;
+            temp += add;
+        }
+
+        try {
+            for (int i = 0; i < n; i++) {
+                this.vars.unset(var);
+                this.vars.set(var, values[i]);
+                double evaluation = expr.eval(vars);
+                System.out.print(values[i] + " " + evaluation);
+                System.out.println();
+            }
+        } catch (UnboundVariableException e) {
+            printUnboundVariableError(e.name());
+            return;
+        }
+
     }
 
     /**

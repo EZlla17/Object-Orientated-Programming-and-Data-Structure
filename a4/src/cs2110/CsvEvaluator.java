@@ -2,6 +2,7 @@ package cs2110;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -38,9 +39,51 @@ public class CsvEvaluator {
         // A mapping of the coordinates of cells we have seen so far to their numerical values (if
         // they are a number or a successfully evaluated formula).
         VarTable vars = new MapVarTable();
+        int rowCount = 0;
 
-        // TODO: Implement this method according to its specification.
-        throw new UnsupportedOperationException();
+        for (CSVRecord row : parser){
+            int colCount = 0;
+            rowCount++;
+            for (String cell : row){
+                String colName = colToLetters(colCount) + rowCount;
+                String displayName = "";
+                colCount++;
+                if (cell.length() != 0){
+                    RpnParser rpn = new RpnParser();
+                    String exprString = cell.substring(1);
+                    if (cell.substring(0 , 1).equals("=")){
+                        try{
+                            Expression expr = rpn.parse(exprString, defs);
+                            displayName = String.valueOf(expr.eval(vars));
+                            vars.set(colName, expr.eval(vars));
+
+                        } catch (UnboundVariableException e){
+                            System.out.println(e.getMessage());
+                            displayName = "#N/A";
+
+                        }catch (UndefinedFunctionException e){
+                            System.out.println(e.getMessage());
+                            displayName = "#N/A";
+
+                        }catch (IncompleteRpnException e){
+                            System.out.println(e.getMessage());
+                            displayName = "#N/A";
+                        }
+                    }
+                    else{
+                        try{
+                            Double.parseDouble(cell);
+                            vars.set(colName, Double.parseDouble(cell));
+                        } catch (NumberFormatException e) {
+                            System.out.println(e.getMessage());
+                        }
+                        displayName = cell;
+                    }
+                    printer.print(displayName);
+                }
+            }
+            printer.println();
+        }
 
         // Note that `CSVParser` implements `Iterable<CSVRecord>` and that `CSVRecord` implements
         // `Iterable<String>`.  This may suggest a solution using "enhanced for-loops" (though this
@@ -61,7 +104,21 @@ public class CsvEvaluator {
         // The left digits are the representation of x divided by the base (the "quotient").
 
         // TODO: Implement this method according to its specification.
-        throw new UnsupportedOperationException();
+        char[] alpha = " ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+        if (n == 0){
+            return "";
+        }
+        if (n <= 26){
+            return String.valueOf(alpha[n]);
+        }
+        int remainder = n % 26;
+
+        if (remainder == 0){
+            return colToLetters(n / 26 - 1) + "Z";
+        }
+        else{
+            return colToLetters(n/26) + colToLetters(remainder);
+        }
     }
 
     /**

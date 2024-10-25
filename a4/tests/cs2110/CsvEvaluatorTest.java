@@ -101,6 +101,7 @@ class CsvEvaluatorTest {
         StringBuilder output = new StringBuilder();
         CsvEvaluator.evaluateCsv(CsvEvaluator.SIMPLIFIED_CSV.parse(new StringReader(input)),
                 CsvEvaluator.SIMPLIFIED_CSV.print(output));
+        System.out.println(output.toString());
         assertEquals(expected, output.toString());
     }
 

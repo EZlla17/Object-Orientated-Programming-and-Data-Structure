@@ -28,8 +28,8 @@ public class Conditional implements Expression {
 
     /**
      * Return this node's value. If condition is 0.0 return the value of falseBranch.
-     * Otherwise, return the value of the trueBranch.
      * @param vars variable table for linking variables to constants
+     * Otherwise, return the value of the trueBranch.
      */
     @Override
     public double eval(VarTable vars) throws UnboundVariableException {

@@ -20,8 +20,6 @@ public class Operation implements Expression {
      */
     private Expression rightOperand;
 
-    //__Resolve__
-    private int opCount = 0;
 
     /**
      * Create an operation with the left operand, the right operand and the operator.
@@ -43,6 +41,8 @@ public class Operation implements Expression {
 
     /**
      * Evaluate the operation by calling operate method on left operant and right operant.
+     * @param vars variable table for linking variables to constants.
+     * return the evaluation.
      */
     @Override
     public double eval(VarTable vars) throws UnboundVariableException{
@@ -55,11 +55,15 @@ public class Operation implements Expression {
      */
     @Override
     public int opCount() {
-        opCount = leftOperand.opCount() + rightOperand.opCount() + 1;
-        assertInv();
-        return opCount;
+        return leftOperand.opCount() + rightOperand.opCount() + 1;
     }
 
+    /**
+     * Generates the postfixString notation of this `Operation`.
+     * return a string of the postfix notation where the postfix notation of
+     * left operand is followed by the postfix notation of the right operand
+     * and end with the operator's symbol.
+     */
     @Override
     public String postfixString(){
         assertInv();
@@ -72,6 +76,12 @@ public class Operation implements Expression {
         return postFixString.strip();
     }
 
+    /**
+     * Generates the infixString notation of this `Operation`.
+     * return a string of the postfix notation where the postfix notation of
+     * left operand is followed by the operator's symbol and end with the
+     * postfix notation of the right operand.
+     */
     @Override
     public String infixString(){
         assertInv();
@@ -85,6 +95,11 @@ public class Operation implements Expression {
         return inFixString;
     }
 
+    /**
+     * Optimizes the expression by recursively optimizing the left and right operand.
+     * @param vars variable table for linking variables to constants.
+     * return the optimized operation.
+     */
     @Override
     public Expression optimize(VarTable vars){
         leftOperand=leftOperand.optimize(vars);
@@ -100,6 +115,10 @@ public class Operation implements Expression {
         return this;
     }
 
+    /**
+     * Find all variable dependencies from the left operand and right operand.
+     * @return a set of these variable dependencies of this `Operation` expression.
+     */
     @Override
     public Set<String> dependencies(){
         Set<String> newSet = new HashSet<>();
@@ -108,6 +127,13 @@ public class Operation implements Expression {
         return newSet;
     }
 
+    /**
+     * Checks whether this `Operation` expression is equal to `other`
+     * @param other the object to be compared with this `Operation`
+     * Return true if `other` is an instance of `Operation`,
+     * or has the same operator and operand values as this `Operation`.
+     * Otherwise, return false.
+     */
     @Override
     public boolean equals(Object other) {
 

@@ -122,18 +122,64 @@ class CsvEvaluatorTest {
         assertEquals(expected, output.toString());
     }
 
-    // Not yet tested:
+
     // * Formulas with conditional expressions: correct evaluation
+    @Test
+    @DisplayName("A spreadsheet formula with conditional expressions should have correct " +
+            "evaluation.")
+    void testEvaluateCsvWithCon() throws IOException {
+        String input = "x,2.5\n" +
+                "y,=1 6 8 ?:\n";
+        String expected = "x,2.5\n" +
+                "y,6.0\n";
+
+        StringBuilder output = new StringBuilder();
+        CsvEvaluator.evaluateCsv(CsvEvaluator.SIMPLIFIED_CSV.parse(new StringReader(input)),
+                CsvEvaluator.SIMPLIFIED_CSV.print(output));
+        assertEquals(expected, output.toString());
+    }
+
     // * Formulas with known function applications: correct evaluation
+    @Test
+    @DisplayName("A formula with known function application should have correct " +
+            "evaluation")
+    void testEvaluateCsvKnownFunction() throws IOException {
+        // A formula that uses an unsupported function "sqrt"
+        String input = "x,3.14159\n" +
+                "y,=16 sqrt()\n";
+        String expected = "x,3.14159\n" +
+                "y,4.0\n";
+
+        StringBuilder output = new StringBuilder();
+        CsvEvaluator.evaluateCsv(CsvEvaluator.SIMPLIFIED_CSV.parse(new StringReader(input)),
+                CsvEvaluator.SIMPLIFIED_CSV.print(output));
+        assertEquals(expected, output.toString());
+    }
+
+
     // * Formulas with unknown function applications: #N/A
+    @Test
+    @DisplayName("A formula with an unknown function application should evaluate to #N/A")
+    void testEvaluateCsvUnknownFunction() throws IOException {
+        // A formula that uses an unsupported function "sqrt"
+        String input = "x,6\n" +
+                "y,=A1 unknown()\n";
+        String expected = "x,6\n" +
+                "y,#N/A\n";
+
+        StringBuilder output = new StringBuilder();
+        CsvEvaluator.evaluateCsv(CsvEvaluator.SIMPLIFIED_CSV.parse(new StringReader(input)),
+                CsvEvaluator.SIMPLIFIED_CSV.print(output));
+        assertEquals(expected, output.toString());
+    }
+
     // * Formulas with future cell references (to numbers or other formulas): #N/A
+
     // * Formulas with out-of-bounds cell references: #N/A
+
     // * Formulas with variables that do not correspond to a cell coordinate: #N/A
+    
     // * Formulas containing an incomplete RPN expression: #N/A
-    //
-    // TODO: The autograder will test your code under these conditions.  It is up to you to decide
-    //  whether the given tests provide sufficient coverage or whether you should write more to
-    //  boost your confidence in your code's behavior.
 
 
 }

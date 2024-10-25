@@ -12,9 +12,9 @@ class TreeVarTableTest {
     @DisplayName("Setting and retrieving a variable in TreeVarTable")
     void testSetAndGet() throws UnboundVariableException {
         TreeVarTable varTable = new TreeVarTable();
-        varTable.set("x", 2.0);
+        varTable.set("s", 2.0);
         System.out.println(varTable.names());
-        assertEquals(2.0, varTable.get("x"));
+        assertEquals(2.0, varTable.get("s"));
     }
 
     @Test

@@ -39,56 +39,52 @@ public class CsvEvaluator {
         // A mapping of the coordinates of cells we have seen so far to their numerical values (if
         // they are a number or a successfully evaluated formula).
         VarTable vars = new MapVarTable();
+
         int rowCount = 0;
 
         for (CSVRecord row : parser){
             int colCount = 0;
-            rowCount++;
+
             for (String cell : row){
                 String colName = colToLetters(colCount) + rowCount;
                 String displayName = "";
-                colCount++;
-                if (cell.length() != 0){
+
+                if (cell.length() == 0){
+                }
+                else if (cell.substring(0 , 1).equals("=")){
                     RpnParser rpn = new RpnParser();
                     String exprString = cell.substring(1);
-                    if (cell.substring(0 , 1).equals("=")){
-                        try{
-                            Expression expr = rpn.parse(exprString, defs);
-                            displayName = String.valueOf(expr.eval(vars));
-                            vars.set(colName, expr.eval(vars));
-
-                        } catch (UnboundVariableException e){
-                            System.out.println(e.getMessage());
-                            displayName = "#N/A";
-
-                        }catch (UndefinedFunctionException e){
-                            System.out.println(e.getMessage());
-                            displayName = "#N/A";
-
-                        }catch (IncompleteRpnException e){
-                            System.out.println(e.getMessage());
-                            displayName = "#N/A";
-                        }
+                    try{
+                        Expression expr = rpn.parse(exprString, defs);
+                        displayName = String.valueOf(expr.eval(vars));
+                        vars.set(colName, expr.eval(vars));
+                    }catch (UndefinedFunctionException e){
+                        displayName = "#N/A";
+                    }catch (IncompleteRpnException e){
+                        displayName = "#N/A";
+                    } catch (UnboundVariableException e) {
+                        displayName = "#N/A";
                     }
-                    else{
-                        try{
-                            Double.parseDouble(cell);
-                            vars.set(colName, Double.parseDouble(cell));
-                        } catch (NumberFormatException e) {
-                            System.out.println(e.getMessage());
-                        }
-                        displayName = cell;
+                } else{
+                    try{
+                        Double.parseDouble(cell);
+                        vars.set(colName, Double.parseDouble(cell));
+                    } catch (NumberFormatException e) {
+                        System.out.println(e.getMessage());
                     }
-                    printer.print(displayName);
+                    displayName = cell;
                 }
+                colCount += 1;
+                printer.print(displayName);
             }
+            rowCount += 1;
             printer.println();
         }
+    }
 
         // Note that `CSVParser` implements `Iterable<CSVRecord>` and that `CSVRecord` implements
         // `Iterable<String>`.  This may suggest a solution using "enhanced for-loops" (though this
         // is not strictly required).
-    }
 
     /**
      * Return the base-26 bijective numeration of `n` using the digits 'A'-'Z'.  Requires `n` is

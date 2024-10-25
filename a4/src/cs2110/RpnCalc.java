@@ -489,7 +489,48 @@ public class RpnCalc {
     public void doDef(Scanner scanner) {
         // TODO (challenge extension): Implement this method according to its specification.
         // Use the helper functions `updateExpr()` and `registerDef()` when appropriate.
-        System.err.println("Sorry, this command is not yet supported.");
+
+        String name ="";
+        String var = "";
+
+        try{
+            scanner.next();
+            name = scanner.next();
+            var = scanner.next();
+        } catch (NoSuchElementException | NumberFormatException e) {
+            System.err.println("Improper arguments are passed.");
+        }
+
+        try{
+            if(scanner.hasNext()){
+                String expression = scanner.nextLine().trim();
+                if (!expression.isEmpty()){
+                    Scanner expr = new Scanner(expression);
+                    updateExpr(expr);
+                }
+            }
+        } catch (IncompleteRpnException e) {
+            System.err.println("Expression cannot be parsed.");
+            return;
+        } catch (UndefinedFunctionException e){
+            System.err.println("Expression cannot be parsed.");
+            return;
+        }
+
+        if (defs.containsKey(name)){
+            System.err.println("Improper arguments are passed, function already exist.");
+            return;
+        }
+
+        Set<String> variables = expr.dependencies();
+        if (!(variables.contains(var) && variables.size()==1)){
+            System.err.println("Improper arguments are passed, function already exist.");
+            return;
+        }
+
+        UnaryFunction functionAdd=UnaryFunction.fromExpression(name,expr,var);
+        registerDef(functionAdd);
+
     }
 
 

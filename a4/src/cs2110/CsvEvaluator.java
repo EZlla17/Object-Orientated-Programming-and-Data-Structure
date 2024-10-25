@@ -43,9 +43,11 @@ public class CsvEvaluator {
         int rowCount = 0;
 
         for (CSVRecord row : parser){
+            rowCount++;
             int colCount = 0;
 
             for (String cell : row){
+                colCount++;
                 String colName = colToLetters(colCount) + rowCount;
                 String displayName = "";
 
@@ -74,10 +76,8 @@ public class CsvEvaluator {
                     }
                     displayName = cell;
                 }
-                colCount += 1;
                 printer.print(displayName);
             }
-            rowCount += 1;
             printer.println();
         }
     }
@@ -100,21 +100,16 @@ public class CsvEvaluator {
         // The left digits are the representation of x divided by the base (the "quotient").
 
         // TODO: Implement this method according to its specification.
-        char[] alpha = " ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+
+        char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
         if (n == 0){
             return "";
         }
-        if (n <= 26){
-            return String.valueOf(alpha[n]);
-        }
-        int remainder = n % 26;
 
-        if (remainder == 0){
-            return colToLetters(n / 26 - 1) + "Z";
-        }
-        else{
-            return colToLetters(n/26) + colToLetters(remainder);
-        }
+        int remain= (n - 1) % 26;
+        int quo = (n - 1) / 26;
+
+        return colToLetters(quo) + alpha[remain];
     }
 
     /**

@@ -141,7 +141,7 @@ class CsvEvaluatorTest {
 
     // * Formulas with known function applications: correct evaluation
     @Test
-    @DisplayName("A formula with known function application should have correct " +
+    @DisplayName("A spreadsheet formula with known function application should have correct " +
             "evaluation")
     void testEvaluateCsvKnownFunction() throws IOException {
         // A formula that uses an unsupported function "sqrt"
@@ -159,7 +159,7 @@ class CsvEvaluatorTest {
 
     // * Formulas with unknown function applications: #N/A
     @Test
-    @DisplayName("A formula with an unknown function application should evaluate to #N/A")
+    @DisplayName("A spreadsheet formula with an unknown function application should evaluate to #N/A")
     void testEvaluateCsvUnknownFunction() throws IOException {
         // A formula that uses an unsupported function "sqrt"
         String input = "x,6\n" +
@@ -174,12 +174,67 @@ class CsvEvaluatorTest {
     }
 
     // * Formulas with future cell references (to numbers or other formulas): #N/A
+    @Test
+    @DisplayName("A spreadsheet formula with  future cell references should evaluate to #N/A")
+    void testEvaluateCsvFutureCell() throws IOException {
+        // A formula that uses an unsupported function "sqrt"
+        String input = "x,6\n" +
+                "y,=X1 sin()\n";
+        String expected = "x,6\n" +
+                "y,#N/A\n";
+
+        StringBuilder output = new StringBuilder();
+        CsvEvaluator.evaluateCsv(CsvEvaluator.SIMPLIFIED_CSV.parse(new StringReader(input)),
+                CsvEvaluator.SIMPLIFIED_CSV.print(output));
+        assertEquals(expected, output.toString());
+    }
 
     // * Formulas with out-of-bounds cell references: #N/A
+    @Test
+    @DisplayName("A spreadsheet formula with out-of-bounds cell references should evaluate to #N/A")
+    void testEvaluateCsvOutOfBound() throws IOException {
+        // A formula that uses an unsupported function "sqrt"
+        String input = "x,6\n" +
+                "y,=A1 B2 sin()\n";
+        String expected = "x,6\n" +
+                "y,#N/A\n";
+
+        StringBuilder output = new StringBuilder();
+        CsvEvaluator.evaluateCsv(CsvEvaluator.SIMPLIFIED_CSV.parse(new StringReader(input)),
+                CsvEvaluator.SIMPLIFIED_CSV.print(output));
+        assertEquals(expected, output.toString());
+    }
 
     // * Formulas with variables that do not correspond to a cell coordinate: #N/A
-    
-    // * Formulas containing an incomplete RPN expression: #N/A
+    @Test
+    @DisplayName("A spreadsheet formula countaining an incomplete RPN should evaluate to #N/A")
+    void testEvaluateCsvVariablesNotCorrespond() throws IOException {
+        // A formula that uses an unsupported function "sqrt"
+        String input = "x,6\n" +
+                "y,=G3\n";
+        String expected = "x,6\n" +
+                "y,#N/A\n";
 
+        StringBuilder output = new StringBuilder();
+        CsvEvaluator.evaluateCsv(CsvEvaluator.SIMPLIFIED_CSV.parse(new StringReader(input)),
+                CsvEvaluator.SIMPLIFIED_CSV.print(output));
+        assertEquals(expected, output.toString());
+    }
+
+    // * Formulas containing an incomplete RPN expression: #N/A
+    @Test
+    @DisplayName("A spreadsheet formula countaining an incomplete RPN should evaluate to #N/A")
+    void testEvaluateCsvincompleteRPN() throws IOException {
+        // A formula that uses an unsupported function "sqrt"
+        String input = "x,6\n" +
+                "y,=x +\n";
+        String expected = "x,6\n" +
+                "y,#N/A\n";
+
+        StringBuilder output = new StringBuilder();
+        CsvEvaluator.evaluateCsv(CsvEvaluator.SIMPLIFIED_CSV.parse(new StringReader(input)),
+                CsvEvaluator.SIMPLIFIED_CSV.print(output));
+        assertEquals(expected, output.toString());
+    }
 
 }

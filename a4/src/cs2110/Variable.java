@@ -24,6 +24,7 @@ public class Variable implements Expression{
     }
 
     /**
+     * @param vars variable table for linking variables to constants
      * Return the value of the Variable if the Variable is in vars.
      * If the Variable is not in vars, throw UnboundVariableException.
      */
@@ -60,9 +61,9 @@ public class Variable implements Expression{
     }
 
     /**
-     * Return whether `other` is equal to this.
-     * Return true if `other` has the same name with this.
-     * Return false if `other` does not have the same name with this
+     * Return whether `other` is equal to this `Variable`.
+     * Return true if `other` has the same name with this `Variable`.
+     * Return false if `other` does not have the same name with this `Variable`.
      */
     public boolean equals(Object other) {
         if (other == this) {
@@ -76,6 +77,13 @@ public class Variable implements Expression{
     }
 
 
+    /**
+     * Optimize the Variable expression
+     * @param vars variable table for linking variables to constants
+     * A Variable can only be optimized if it has an assigned value in the provided variable table,
+     * in which case it optimizes to a Constant; otherwise, it optimizes to itself.
+     * return the optimized expression.
+     */
     @Override
     public Expression optimize(VarTable vars) {
         if (vars.contains(name)){
@@ -89,7 +97,10 @@ public class Variable implements Expression{
         return this;
     }
 
-
+    /**
+     * A Variable node depends on itself.
+     * return the dependencies of this `Variable`.
+     */
     @Override
     public Set<String> dependencies() {
         return Set.of(name);

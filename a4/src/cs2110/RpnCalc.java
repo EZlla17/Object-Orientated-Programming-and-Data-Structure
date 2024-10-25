@@ -494,7 +494,6 @@ public class RpnCalc {
         String var = "";
 
         try{
-            scanner.next();
             name = scanner.next();
             var = scanner.next();
         } catch (NoSuchElementException | NumberFormatException e) {

@@ -345,4 +345,157 @@ class TreeVarTableTest {
         assertFalse(varTable.contains("aa"));
         assertTrue(varTable.contains("ab"));
     }
+
+    @Test
+    @DisplayName("Set method: Adding variables with the same value")
+    void testSetSameValueVariables() throws UnboundVariableException {
+        TreeVarTable varTable = new TreeVarTable();
+
+        // Set multiple variables with the same value
+        varTable.set("a", 5.0);
+        varTable.set("b", 5.0);
+        varTable.set("c", 5.0);
+
+        // Ensure that all variables can be retrieved correctly
+        assertEquals(5.0, varTable.get("a"));
+        assertEquals(5.0, varTable.get("b"));
+        assertEquals(5.0, varTable.get("c"));
+
+        // Ensure that the tree contains all the variables
+        assertTrue(varTable.contains("a"));
+        assertTrue(varTable.contains("b"));
+        assertTrue(varTable.contains("c"));
+
+        // Verify size is updated correctly
+        assertEquals(3, varTable.size());
+    }
+
+    @Test
+    @DisplayName("Unset method: Removing one of the nodes with the same value")
+    void testUnsetSameValueVariable() throws UnboundVariableException {
+        TreeVarTable varTable = new TreeVarTable();
+
+        // Set multiple variables with the same value
+        varTable.set("x", 10.0);
+        varTable.set("y", 10.0);
+        varTable.set("z", 10.0);
+
+        // Remove one of the nodes with the same value
+        varTable.unset("y");
+
+        // Ensure the variable was removed and others still exist
+        assertThrows(UnboundVariableException.class, () -> varTable.get("y"));
+        assertEquals(10.0, varTable.get("x"));
+        assertEquals(10.0, varTable.get("z"));
+
+        // Verify size after unsetting
+        assertEquals(2, varTable.size());
+    }
+
+    @Test
+    @DisplayName("Contains method: Verify contains method works correctly for variables with same values")
+    void testContainsSameValueVariables() {
+        TreeVarTable varTable = new TreeVarTable();
+
+        // Set variables with the same value
+        varTable.set("first", 20.0);
+        varTable.set("second", 20.0);
+        varTable.set("third", 20.0);
+
+        // Check that each variable is recognized by the contains method
+        assertTrue(varTable.contains("first"));
+        assertTrue(varTable.contains("second"));
+        assertTrue(varTable.contains("third"));
+    }
+
+    @Test
+    @DisplayName("Initial state of TreeVarTable should be empty")
+    void testInitialEmptyState() {
+        TreeVarTable varTable = new TreeVarTable();
+        assertEquals(0, varTable.size(), "Size should be 0 for an empty map");
+        assertTrue(varTable.names().isEmpty(), "Names set should be empty for an empty map");
+    }
+
+    @Test
+    @DisplayName("Attempting to get a variable from an empty TreeVarTable should throw UnboundVariableException")
+    void testGetFromEmptyMap() {
+        TreeVarTable varTable = new TreeVarTable();
+        assertThrows(UnboundVariableException.class, () -> varTable.get("x"),
+                "Getting any variable from an empty map should throw UnboundVariableException");
+    }
+
+    @Test
+    @DisplayName("Contains method should return false for any variable name on an empty TreeVarTable")
+    void testContainsOnEmptyMap() {
+        TreeVarTable varTable = new TreeVarTable();
+        assertFalse(varTable.contains("x"), "Contains should return false for any variable on an empty map");
+    }
+
+    @Test
+    @DisplayName("Size of an empty TreeVarTable should be 0")
+    void testSizeOnEmptyMap() {
+        TreeVarTable varTable = new TreeVarTable();
+        assertEquals(0, varTable.size(), "Size should be 0 for an empty map");
+    }
+
+    @Test
+    @DisplayName("Names method should return an empty set on an empty TreeVarTable")
+    void testNamesOnEmptyMap() {
+        TreeVarTable varTable = new TreeVarTable();
+        Set<String> names = varTable.names();
+        assertTrue(names.isEmpty(), "Names set should be empty for an empty map");
+    }
+
+    @Test
+    @DisplayName("Test empty() method creates an empty TreeVarTable")
+    void testEmpty() {
+        TreeVarTable emptyTable = TreeVarTable.empty();
+        assertEquals(0, emptyTable.size(), "The size of an empty table should be 0.");
+        assertThrows(UnboundVariableException.class, () -> emptyTable.get("x"), "Retrieving any variable from an empty table should throw UnboundVariableException.");
+        assertTrue(emptyTable.names().isEmpty(), "The names set of an empty table should be empty.");
+    }
+
+    @Test
+    @DisplayName("Test of(name, value) creates TreeVarTable with single entry")
+    void testOfSingleEntry() throws UnboundVariableException {
+        TreeVarTable singleEntryTable = TreeVarTable.of("x", 10.0);
+        assertEquals(1, singleEntryTable.size(), "The size should be 1 after adding a single entry.");
+        assertEquals(10.0, singleEntryTable.get("x"), "The value associated with 'x' should be 10.0.");
+        assertTrue(singleEntryTable.contains("x"), "The table should contain the variable 'x'.");
+        assertEquals(Set.of("x"), singleEntryTable.names(), "The names set should contain only 'x'.");
+    }
+
+    @Test
+    @DisplayName("Test of(name1, value1, name2, value2) with unique names creates TreeVarTable with two entries")
+    void testOfTwoEntriesUniqueNames() throws UnboundVariableException {
+        TreeVarTable twoEntryTable = TreeVarTable.of("x", 10.0, "y", 20.0);
+        assertEquals(2, twoEntryTable.size(), "The size should be 2 after adding two unique entries.");
+        assertEquals(10.0, twoEntryTable.get("x"), "The value associated with 'x' should be 10.0.");
+        assertEquals(20.0, twoEntryTable.get("y"), "The value associated with 'y' should be 20.0.");
+        assertTrue(twoEntryTable.contains("x"), "The table should contain the variable 'x'.");
+        assertTrue(twoEntryTable.contains("y"), "The table should contain the variable 'y'.");
+        assertEquals(Set.of("x", "y"), twoEntryTable.names(), "The names set should contain 'x' and 'y'.");
+    }
+
+    @Test
+    @DisplayName("Test of(name1, value1, name2, value2) with same name should update value of existing entry")
+    void testOfTwoEntriesSameName() throws UnboundVariableException {
+        TreeVarTable updatedTable = TreeVarTable.of("x", 10.0, "x", 15.0);
+        assertEquals(1, updatedTable.size(), "The size should be 1 after adding two entries with the same name.");
+        assertEquals(15.0, updatedTable.get("x"), "The value of 'x' should be updated to 15.0.");
+        assertTrue(updatedTable.contains("x"), "The table should contain the variable 'x'.");
+        assertEquals(Set.of("x"), updatedTable.names(), "The names set should contain only 'x'.");
+    }
+
+    @Test
+    @DisplayName("Test of(name1, value1, name2, value2) with smaller and larger values to test tree structure")
+    void testOfTwoEntriesWithLessAndMore() throws UnboundVariableException {
+        TreeVarTable twoEntryTree = TreeVarTable.of("root", 10.0, "less", 5.0);
+        assertEquals(2, twoEntryTree.size(), "The size should be 2 after adding two entries.");
+        assertEquals(10.0, twoEntryTree.get("root"), "The value associated with 'root' should be 10.0.");
+        assertEquals(5.0, twoEntryTree.get("less"), "The value associated with 'less' should be 5.0.");
+        assertTrue(twoEntryTree.contains("root"), "The table should contain the variable 'root'.");
+        assertTrue(twoEntryTree.contains("less"), "The table should contain the variable 'less'.");
+    }
+
 }

@@ -1,15 +1,28 @@
 package cs2110;
 
 import java.util.HashSet;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class TreeVarTable implements VarTable {
-
-
+    /**
+     * Invariants:
+     * 1. Binary Search Order: For each node in the tree:
+     *      - All nodes in the `less` subtree have `data` values less than this node’s `data`.
+     *      - All nodes in the `more` subtree have `data` values greater than this node’s `data`.
+     * 2. Binary Tree Structure: Each node has at most two children (`less` and `more`), which are either `null` or instances of `TreeVarTable`.
+     * 3. Unique Variable Names: Each `name` field is unique within the entire tree.
+     * 4. Variable Name Nullity:
+     *      - The `name` field can only be `null` for the root node when the tree is empty.
+     *      - For all other nodes, `name` is non-null.
+     * 5. Leaf Node Condition: A node with `less == null` and `more == null` is considered a leaf node, having no further descendants.
+     * 6. Root Data Validity: If the root node's `name` is non-null, then `data` must contain the value associated with `name`.
+     */
     String name = null;
+
     double data;
+
     TreeVarTable less = null;
+
     TreeVarTable more = null;
 
     /**
@@ -191,6 +204,9 @@ public class TreeVarTable implements VarTable {
     public Set<String> names(){
         Set<String> result = new HashSet<>();
 
+        if (less == null && more == null && name == null){
+            return result;
+        }
         if (less == null && more == null && name != null){
             result.add(name);
             return result;
@@ -206,5 +222,28 @@ public class TreeVarTable implements VarTable {
             }
             return resultRecursive;
         }
+    }
+
+    public static TreeVarTable empty() {
+        return new TreeVarTable();
+    }
+
+    /**
+     * Create a MapVarTable associating `value` with variable `name`.
+     */
+    public static TreeVarTable of(String name, double value) {
+        TreeVarTable ans = new TreeVarTable();
+        ans.set(name, value);
+        return ans;
+    }
+
+    /**
+     * Create a MapVarTable associating `value1` with variable `name1` and `value2` with `name2`.
+     */
+    public static TreeVarTable of(String name1, double value1, String name2, double value2) {
+        TreeVarTable ans = new TreeVarTable();
+        ans.set(name1, value1);
+        ans.set(name2, value2);
+        return ans;
     }
 }

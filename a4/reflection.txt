@@ -27,5 +27,6 @@ Please use the `RpnCalc` program to answer these questions:
 1. What part of the assignment did you find the trickiest to understand or get working?
    Was there a particular insight or diagnostic technique that lead to a breakthrough?
 
-   Answer: For our group, the most tricky part we found it the most difficult and weird is the Rpn Praser because we
-   first need to comprehend what does token do
+   Answer: For our group, the most tricky part we found is the Rpn Praser because we
+   first need to comprehend what does token do and it is a long class. We make several test driven
+   development on try and catch blocks

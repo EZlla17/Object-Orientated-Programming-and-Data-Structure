@@ -32,8 +32,8 @@ public class Operation implements Expression {
 
     /**
      * Assert whether invariants meets it's specification
-     * */
-    public void assertInv(){
+     */
+    public void assertInv() {
         assert (leftOperand != null);
         assert (rightOperand != null);
         assert (op != null);
@@ -41,11 +41,12 @@ public class Operation implements Expression {
 
     /**
      * Evaluate the operation by calling operate method on left operant and right operant.
+     *
      * @param vars variable table for linking variables to constants.
-     * return the evaluation.
+     *             return the evaluation.
      */
     @Override
-    public double eval(VarTable vars) throws UnboundVariableException{
+    public double eval(VarTable vars) throws UnboundVariableException {
         assertInv();
         return op.operate(leftOperand.eval(vars), rightOperand.eval(vars));
     }
@@ -65,7 +66,7 @@ public class Operation implements Expression {
      * and end with the operator's symbol.
      */
     @Override
-    public String postfixString(){
+    public String postfixString() {
         assertInv();
         String opString = op.symbol() + " ";
         String rightOpString = rightOperand.postfixString() + " ";
@@ -83,13 +84,13 @@ public class Operation implements Expression {
      * postfix notation of the right operand.
      */
     @Override
-    public String infixString(){
+    public String infixString() {
         assertInv();
         String opString = " " + op.symbol() + " ";
         String rightOpString = rightOperand.infixString();
         String leftOpString = leftOperand.infixString();
 
-        String inFixString = "(" + leftOpString +  opString + rightOpString + ")";
+        String inFixString = "(" + leftOpString + opString + rightOpString + ")";
 
         assertInv();
         return inFixString;
@@ -97,15 +98,16 @@ public class Operation implements Expression {
 
     /**
      * Optimizes the expression by recursively optimizing the left and right operand.
+     *
      * @param vars variable table for linking variables to constants.
-     * return the optimized operation.
+     *             return the optimized operation.
      */
     @Override
-    public Expression optimize(VarTable vars){
-        leftOperand=leftOperand.optimize(vars);
-        rightOperand=rightOperand.optimize(vars);
+    public Expression optimize(VarTable vars) {
+        leftOperand = leftOperand.optimize(vars);
+        rightOperand = rightOperand.optimize(vars);
         if (rightOperand instanceof Constant
-                && leftOperand instanceof Constant){
+                && leftOperand instanceof Constant) {
             try {
                 return new Constant(eval(vars));
             } catch (UnboundVariableException e) {
@@ -117,10 +119,11 @@ public class Operation implements Expression {
 
     /**
      * Find all variable dependencies from the left operand and right operand.
+     *
      * @return a set of these variable dependencies of this `Operation` expression.
      */
     @Override
-    public Set<String> dependencies(){
+    public Set<String> dependencies() {
         Set<String> newSet = new HashSet<>();
         newSet.addAll(leftOperand.dependencies());
         newSet.addAll(rightOperand.dependencies());
@@ -129,10 +132,11 @@ public class Operation implements Expression {
 
     /**
      * Checks whether this `Operation` expression is equal to `other`
+     *
      * @param other the object to be compared with this `Operation`
-     * Return true if `other` is an instance of `Operation`,
-     * or has the same operator and operand values as this `Operation`.
-     * Otherwise, return false.
+     *              Return true if `other` is an instance of `Operation`,
+     *              or has the same operator and operand values as this `Operation`.
+     *              Otherwise, return false.
      */
     @Override
     public boolean equals(Object other) {

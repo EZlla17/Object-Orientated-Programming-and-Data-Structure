@@ -38,10 +38,7 @@ public class RpnParser {
 
         // Loop over each token in the expression string from left to right
         for (Token token : Token.tokenizer(exprString)) {
-            // TODO: Based on the dynamic type of the token, create the appropriate Expression node
-            //  and push it onto the stack, popping arguments as needed.
-            //  The "number" token is done for you as an example.
-            //  __DONE__
+
             if (token instanceof Token.Number) {
                 Token.Number numToken = (Token.Number) token;
                 stack.push(new Constant(numToken.doubleValue()));
@@ -92,9 +89,6 @@ public class RpnParser {
                 }
             }
         }
-        // TODO: Return the overall expression node.  (This might also be a good place to check that
-        //  the string really did correspond to a single expression.)
-        //  __DONE__
 
         if (stack.size() == 1) {
             return stack.pop();

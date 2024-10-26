@@ -28,8 +28,9 @@ public class Conditional implements Expression {
 
     /**
      * Return this node's value. If condition is 0.0 return the value of falseBranch.
+     *
      * @param vars variable table for linking variables to constants
-     * Otherwise, return the value of the trueBranch.
+     *             Otherwise, return the value of the trueBranch.
      */
     @Override
     public double eval(VarTable vars) throws UnboundVariableException {
@@ -86,8 +87,9 @@ public class Conditional implements Expression {
     /**
      * Optimizes this `Conditional` expression by recursively optimizes `trueBranch`, `falseBranch`,
      * and `condition`.
+     *
      * @param vars variable table for linking variables to constants
-     * return the optimized expression, or this when there's no possible simplification.
+     *             return the optimized expression, or this when there's no possible simplification.
      */
     public Expression optimize(VarTable vars) {
         trueBranch = trueBranch.optimize(vars);
@@ -109,6 +111,7 @@ public class Conditional implements Expression {
 
     /**
      * Find all variable dependencies from the `trueBranch`, `falseBranch`, and `condition` expressions.
+     *
      * @return a set of variable dependencies of this `Conditional` expression.
      */
     public Set<String> dependencies() {
@@ -123,9 +126,10 @@ public class Conditional implements Expression {
      * Check whether this `Conditional` expression is equal to another.
      * Two `Conditional` expressions are equal if they are the same instance,
      * or if their `trueBranch`, `falseBranch`, and `condition` are equal.
+     *
      * @param other is the object to be compared with this `Conditional`.
-     * return true if `other` is a `Conditional` that is equal to this instance;
-     * otherwise, return false.
+     *              return true if `other` is a `Conditional` that is equal to this instance;
+     *              otherwise, return false.
      */
     @Override
     public boolean equals(Object other) {

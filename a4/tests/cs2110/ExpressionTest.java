@@ -104,7 +104,6 @@ class VariableExpressionTest {
     @DisplayName("A Variable node should throw an UnboundVariableException when evaluated if its " +
             "variable is not in the var map")
     void testEvalUnbound() {
-        // TODO: Uncomment these lines when you have read about testing exceptions in the handout.
         // They assume that your `Variable` constructor takes its name as an argument.
         Expression expr = new Variable("x");
         assertThrows(UnboundVariableException.class, () -> expr.eval(MapVarTable.empty()));
@@ -149,7 +148,6 @@ class VariableExpressionTest {
     @Test
     @DisplayName("A Variable node should equal itself")
     void testEqualsSelf() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Variable("x");
         assertTrue(expr.equals(expr));
     }
@@ -157,7 +155,6 @@ class VariableExpressionTest {
     @Test
     @DisplayName("A Variable node should equal another Variable node with the same name")
     void testEqualsTrue() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         // Force construction of new String objects to detect inadvertent use of `==`
         Expression expr1 = new Variable(new String("x"));
         Expression expr2 = new Variable(new String("x"));
@@ -177,7 +174,6 @@ class VariableExpressionTest {
     @Test
     @DisplayName("A Variable node only depends on its name")
     void testDependencies() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Variable("x");
         Set<String> deps = expr.dependencies();
         assertTrue(deps.contains("x"));
@@ -188,7 +184,6 @@ class VariableExpressionTest {
     @Test
     @DisplayName("A Variable node should optimize to a Constant if its variable is in the var map")
     void testOptimizeBound() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Variable("x");
         Expression opt = expr.optimize(MapVarTable.of("x", 1.5));
         assertEquals(new Constant(1.5), opt);
@@ -209,7 +204,6 @@ class OperationExpressionTest {
     @DisplayName("An Operation node for ADD with two Constant operands should evaluate to their " +
             "sum")
     void testEvalAdd() throws UnboundVariableException {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Operation(Operator.ADD, new Constant(1.5), new Constant(2));
         assertEquals(3.5, expr.eval(MapVarTable.empty()));
     }
@@ -282,7 +276,6 @@ class OperationExpressionTest {
     @DisplayName("An Operation node with an Operation for either or both operands should report " +
             "the correct number of operations to evaluate it")
     void testOpCountRecursive() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Operation(Operator.ADD,
                 new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
                 new Constant(2.0));
@@ -310,7 +303,6 @@ class OperationExpressionTest {
     @DisplayName("An Operation node with an Operation for either operand should produce the " +
             "expected infix representation with parentheses around each operation")
     void testInfixRecursive() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Operation(Operator.ADD,
                 new Operation(Operator.MULTIPLY, new Constant(1.5), new Variable("x")),
                 new Constant(2.0));
@@ -409,7 +401,6 @@ class OperationExpressionTest {
     @Test
     @DisplayName("An Operation node should equal itself")
     void testEqualsSelf() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Operation(Operator.ADD, new Constant(1.5), new Variable("x"));
         assertTrue(expr.equals(expr));
     }
@@ -418,7 +409,6 @@ class OperationExpressionTest {
     @DisplayName("An Operation node should equal another Operation node with the same " +
             "operator and operands")
     void testEqualsTrue() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr1 = new Operation(Operator.ADD, new Constant(1.5), new Variable("x"));
         Expression expr2 = new Operation(Operator.ADD, new Constant(1.5), new Variable("x"));
         assertTrue(expr1.equals(expr2));
@@ -437,7 +427,6 @@ class OperationExpressionTest {
     @Test
     @DisplayName("An Operation node depends on the dependencies of both of its operands")
     void testDependencies() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Operation(Operator.ADD, new Variable("x"), new Variable("y"));
         Set<String> deps = expr.dependencies();
         assertTrue(deps.contains("x"));
@@ -449,7 +438,6 @@ class OperationExpressionTest {
     @DisplayName("An Operation node depends on the dependencies of both of its operands, one of its operands " +
                  "is Operation node.")
     void testDependenciesWithOp() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Operation(Operator.ADD, new Operation(Operator.ADD, new Variable("x"),
                 new Variable("z")), new Variable("y"));
         Set<String> deps = expr.dependencies();
@@ -463,7 +451,6 @@ class OperationExpressionTest {
     @DisplayName("An Operation node depends on the dependencies of both of its operands, one of its operands " +
             "is Constant.")
     void testDependenciesWithConst() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Operation(Operator.ADD, new Constant(6), new Variable("y"));
         Set<String> deps = expr.dependencies();
         assertTrue(deps.contains("y"));
@@ -474,7 +461,6 @@ class OperationExpressionTest {
     @DisplayName("An Operation node depends on the dependencies of both of its operands, one of its operands " +
             "is Constant.")
     void testDependenciesWithCondition() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Operation(Operator.ADD, new Variable("x"),
                 new Conditional(new Constant(0),
                         new Variable("y"),
@@ -554,7 +540,6 @@ class ConditionalExpressionTest {
     @DisplayName("A Conditional node with Constant non-zero condition and Constant branches should "
             + "evaluate to the first branch's value.")
     void testEvalConstTrue() throws UnboundVariableException {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Conditional(new Constant(1), new Constant(2), new Constant(5));
         assertEquals(2.0, expr.eval(MapVarTable.empty()));
     }
@@ -571,7 +556,6 @@ class ConditionalExpressionTest {
     @DisplayName("A Conditional node with a Variable condition should evaluate to the appropriate "
             + "branch when the variable has a zero or non-zero value in the var map")
     void testEvalCondBound() throws UnboundVariableException {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Conditional(new Variable("x"), new Constant(2), new Constant(5));
         assertEquals(2.0, expr.eval(MapVarTable.of("x", 1.0)));
 
@@ -608,8 +592,6 @@ class ConditionalExpressionTest {
             + "should report the correct number of operations to evaluate it regardless of which "
             + "branch is more expensive")
     void testOpCountRecursive() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
-        //  True branch is more expensive
         Expression expr1 = new Conditional(
                 new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
                 new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
@@ -646,7 +628,6 @@ class ConditionalExpressionTest {
     @DisplayName("A Conditional node with Operation condition and branches should produce the " +
             "expected infix representation.")
     void testInfixRecursive() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr1 = new Conditional(
                 new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
                 new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
@@ -712,7 +693,6 @@ class ConditionalExpressionTest {
     @Test
     @DisplayName("A Condition node should equal itself")
     void testEqualsSelf() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Conditional(new Variable("x"), new Constant(2), new Constant(5));
         assertTrue(expr.equals(expr));
     }
@@ -721,7 +701,6 @@ class ConditionalExpressionTest {
     @DisplayName("A Condition node should equal another Condition node with the same " +
             "condition and branches")
     void testEqualsTrue() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr1 = new Conditional(
                 new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
                 new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),
@@ -757,7 +736,6 @@ class ConditionalExpressionTest {
     @DisplayName("A Condition node depends on the dependencies of its condition and both of its "
             + "branches")
     void testDependencies() {
-        // TODO: Uncomment this test, adjusting constructor invocations as necessary
         Expression expr = new Conditional(
                 new Operation(Operator.ADD, new Variable("x"), new Constant(3)),
                 new Operation(Operator.MULTIPLY, new Constant(2), new Variable("y")),

@@ -405,24 +405,21 @@ public class RpnCalc {
      * variables that have not been assigned a value.
      */
     public void doTabulate(Scanner scanner) {
-        // TODO (challenge extension): Implement this method according to its specification.
-        // Use the helper function `updateExpr()` when appropriate.
-
-        String var="";
-        double lo=0;
-        double hi=0;
-        int n=0;
+        String var = "";
+        double lo = 0;
+        double hi = 0;
+        int n = 0;
 
         try {
-            var= scanner.next();
+            var = scanner.next();
             lo = Double.parseDouble(scanner.next());
             hi = Double.parseDouble(scanner.next());
-            n= Integer.parseInt(scanner.next());
+            n = Integer.parseInt(scanner.next());
         } catch (NoSuchElementException | NumberFormatException e) {
             System.err.println("Improper arguments are passed. Expected: <var> <lo> <hi> <n> [<expr>]");
         }
 
-        if (n<=0){
+        if (n <= 0) {
             System.err.println("Improper arguments are passed.");
             return;
         }
@@ -433,9 +430,9 @@ public class RpnCalc {
         }
 
         try {
-            if (scanner.hasNext()){
+            if (scanner.hasNext()) {
                 String update = scanner.nextLine().trim();
-                if (!update.isEmpty()){
+                if (!update.isEmpty()) {
                     Scanner expression = new Scanner(update);
                     updateExpr(expression);
                 }
@@ -444,7 +441,7 @@ public class RpnCalc {
         } catch (IncompleteRpnException e) {
             System.err.println("Expression cannot be parsed.");
             return;
-        } catch (UndefinedFunctionException e){
+        } catch (UndefinedFunctionException e) {
             System.err.println("Expression cannot be parsed.");
             return;
         }
@@ -487,23 +484,21 @@ public class RpnCalc {
      * already been defined (in the latter two cases, the current expression is still updated).
      */
     public void doDef(Scanner scanner) {
-        // TODO (challenge extension): Implement this method according to its specification.
-        // Use the helper functions `updateExpr()` and `registerDef()` when appropriate.
 
-        String name ="";
+        String name = "";
         String var = "";
 
-        try{
+        try {
             name = scanner.next();
             var = scanner.next();
         } catch (NoSuchElementException | NumberFormatException e) {
             System.err.println("Improper arguments are passed.");
         }
 
-        try{
-            if(scanner.hasNext()){
+        try {
+            if (scanner.hasNext()) {
                 String expression = scanner.nextLine().trim();
-                if (!expression.isEmpty()){
+                if (!expression.isEmpty()) {
                     Scanner expr = new Scanner(expression);
                     updateExpr(expr);
                 }
@@ -511,23 +506,23 @@ public class RpnCalc {
         } catch (IncompleteRpnException e) {
             System.err.println("Expression cannot be parsed.");
             return;
-        } catch (UndefinedFunctionException e){
+        } catch (UndefinedFunctionException e) {
             System.err.println("Expression cannot be parsed.");
             return;
         }
 
-        if (defs.containsKey(name)){
+        if (defs.containsKey(name)) {
             System.err.println("Improper arguments are passed, function already exist.");
             return;
         }
 
         Set<String> variables = expr.dependencies();
-        if (!(variables.contains(var) && variables.size()==1)){
+        if (!(variables.contains(var) && variables.size() == 1)) {
             System.err.println("Improper arguments are passed, function already exist.");
             return;
         }
 
-        UnaryFunction functionAdd=UnaryFunction.fromExpression(name,expr,var);
+        UnaryFunction functionAdd = UnaryFunction.fromExpression(name, expr, var);
         registerDef(functionAdd);
 
     }

@@ -145,4 +145,28 @@ class RpnParserTest {
     void testParseUndefined() {
         assertThrows(UndefinedFunctionException.class, () -> RpnParser.parse("1 foo()", Map.of()));
     }
+
+    @Test
+    @DisplayName("Parsing the expression for dodecahedron surface area should yield correct operation counts")
+    void testDodecahedronSurfaceAreaOperationCount()
+            throws UnboundVariableException, IncompleteRpnException, UndefinedFunctionException {
+
+        // The RPN expression for the surface area of a dodecahedron
+        String exprString = "3 25 10 5 sqrt() * + sqrt() * edgeLength 2 ^ *";
+
+        // Parse the expression
+        Expression expr = RpnParser.parse(exprString, UnaryFunction.mathDefs());
+
+        // Check if the parsed expression is an instance of an expected complex structure
+        assertNotNull(expr, "The parsed expression should not be null");
+
+        // 1. Operation count in the unoptimized expression
+        int opCount = expr.opCount();
+        assertEquals(7, opCount, "Operation count for non-optimized expression");
+
+        // 2. Operation count in the optimized expression
+        Expression optimizedExpr = expr.optimize(MapVarTable.of("edgeLength", 2.0));
+        int optimizedOpCount = optimizedExpr.opCount();
+        assertEquals(7, optimizedOpCount, "Operation count for optimized expression");
+    }
 }

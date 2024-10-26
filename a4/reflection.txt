@@ -2,10 +2,10 @@
 
 ## Submitter metadata
 
-Partner 1: Firstname Lastname (NetID)  - TODO
-Partner 2: Firstname Lastname (NetID)  - delete if working solo
+Partner 1: Firstname Lastname (NetID)  - Jacky Pan rp556
+Partner 2: Firstname Lastname (NetID)  - Xinyi Zhou xz255
 
-Hours spent working on this assignment: 0.0  - TODO
+Hours spent working on this assignment: 0.0  - 30
 
 ## Verification questions
 
@@ -27,4 +27,5 @@ Please use the `RpnCalc` program to answer these questions:
 1. What part of the assignment did you find the trickiest to understand or get working?
    Was there a particular insight or diagnostic technique that lead to a breakthrough?
 
-   Answer: TODO
+   Answer: For our group, the most tricky part we found it the most difficult and weird is the Rpn Praser because we
+   first need to comprehend what does token do

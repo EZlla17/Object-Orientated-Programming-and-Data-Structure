@@ -16,20 +16,14 @@ public class Variable implements Expression {
     }
 
     /**
-     * Assert the object's invariant that the variable `name` should not be empty or null.
-     */
-    private void assertInv() {
-        assert !name.isEmpty();
-        assert name != null;
-    }
-
-    /**
      * @param vars variable table for linking variables to constants
      *             Return the value of the Variable if the Variable is in vars.
      *             If the Variable is not in vars, throw UnboundVariableException.
      */
     @Override
     public double eval(VarTable vars) throws UnboundVariableException {
+        assert vars != null;
+
         if (vars.contains(name)) {
             return vars.get(name);
         }
@@ -66,6 +60,8 @@ public class Variable implements Expression {
      * Return false if `other` does not have the same name with this `Variable`.
      */
     public boolean equals(Object other) {
+        assert other != null;
+
         if (other == this) {
             return true;
         }
@@ -87,6 +83,8 @@ public class Variable implements Expression {
      */
     @Override
     public Expression optimize(VarTable vars) {
+        assert vars != null;
+
         if (vars.contains(name)) {
             try {
                 Constant optimize = new Constant(vars.get(name));

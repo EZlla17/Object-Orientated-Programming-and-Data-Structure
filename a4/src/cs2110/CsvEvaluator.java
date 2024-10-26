@@ -53,7 +53,8 @@ public class CsvEvaluator {
 
                 if (cell.length() == 0){
                 }
-                else if (cell.substring(0 , 1).equals("=")){
+
+                else if (cell.substring(0, 1).equals("=")){
                     RpnParser rpn = new RpnParser();
                     String exprString = cell.substring(1);
                     try{
@@ -67,6 +68,7 @@ public class CsvEvaluator {
                     } catch (UnboundVariableException e) {
                         displayName = "#N/A";
                     }
+
                 } else{
                     try{
                         Double.parseDouble(cell);

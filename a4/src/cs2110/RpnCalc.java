@@ -524,9 +524,7 @@ public class RpnCalc {
 
         UnaryFunction functionAdd = UnaryFunction.fromExpression(name, expr, var);
         registerDef(functionAdd);
-
     }
-
 
     /**
      * Run an interactive calculator application.  If a program argument is provided, commands are

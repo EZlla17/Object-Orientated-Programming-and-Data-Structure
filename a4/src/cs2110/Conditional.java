@@ -3,10 +3,25 @@ package cs2110;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * An expression tree node representing a Conditional statement "()?:" in java.
+ */
 public class Conditional implements Expression {
-    private Expression trueBranch;
-    private Expression falseBranch;
+
+    /**
+     * The coditional expression getting evaluated
+     */
     private Expression condition;
+
+    /**
+     * the expression that will return if the conditional expression is true
+     */
+    private Expression trueBranch;
+
+    /**
+     * the expression that will return if the conditional expression is false
+     */
+    private Expression falseBranch;
 
     /**
      * Create a node representing the conditional node.

@@ -3,6 +3,9 @@ package cs2110;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * An expression tree node representing an operation node representing arithmetic operations.
+ */
 public class Operation implements Expression {
 
     /**

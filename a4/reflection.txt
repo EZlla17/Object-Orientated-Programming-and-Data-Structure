@@ -5,7 +5,7 @@
 Partner 1: Firstname Lastname (NetID)  - Jacky Pan rp556
 Partner 2: Firstname Lastname (NetID)  - Xinyi Zhou xz255
 
-Hours spent working on this assignment: 0.0  - 30
+Hours spent working on this assignment: 0.0  - 20
 
 ## Verification questions
 
@@ -16,17 +16,30 @@ Please use the `RpnCalc` program to answer these questions:
    variable.)
    `3 25 10 5 sqrt() * + sqrt() * edgeLength 2 ^ *`
 
-   Answer: TODO
+   Answer: 7
 
 2. How many operations are required to evaluate the optimized form of that expression?
 
-   Answer: TODO
+   Answer: 2
 
 ## Reflection questions
 
 1. What part of the assignment did you find the trickiest to understand or get working?
    Was there a particular insight or diagnostic technique that lead to a breakthrough?
 
-   Answer: For our group, the most tricky part we found is the Rpn Praser because we
-   first need to comprehend what does token do and it is a long class. We make several test driven
-   development on try and catch blocks
+   Answer: For our group, the most challenging aspect was working with the RPN parser,
+   as it required a thorough understanding of tokens and the class itself was quite
+   extensive. To address this, we adopted a test-driven development approach, focusing
+   on try and catch blocks to ensure all exceptions were appropriately handled across
+   different token subtypes. During this process, we discovered how valuable print
+   statements and error messages could be. These tools helped us pinpoint where our
+   implementation might have issues and guided our debugging efforts.
+
+   This approach was also particularly useful for the more complex task of extending
+   TreeVarTable, where we had to account for numerous cases within each function
+   implementation. By inserting targeted print statements, we were able to observe which
+   code blocks were executed as expected and which were not, allowing us to debug based
+   on the actual versus expected behavior. Additionally, I found it helpful to work through
+   the logic on paper, drawing and "running" the tree to identify mismatches between our
+   code and the intended structure. This combination of debugging techniques and manual
+   tracing helped us refine our implementation step by step.

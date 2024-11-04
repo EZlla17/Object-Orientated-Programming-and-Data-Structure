@@ -58,6 +58,8 @@ public class SelectorApp implements PropertyChangeListener {
         //  label (i.e., custom fonts and colors) is allowed.
         //  See the BorderLayout tutorial [1] for example code that you can adapt.
         //  [1]: https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html
+        frame.add(statusLabel, BorderLayout.PAGE_END);
+
 
         // Add image component with scrollbars
         imgPanel = new ImagePanel();
@@ -67,8 +69,9 @@ public class SelectorApp implements PropertyChangeListener {
         //  The Swing Tutorial has lots of info on scrolling [1], but for this task you only need
         //  the basics from lecture.
         //  [1] https://docs.oracle.com/javase/tutorial/uiswing/components/scrollpane.html
-        frame.add(imgPanel);  // Replace this line
-
+        JScrollPane scrollPane = new JScrollPane(imgPanel);
+        scrollPane.setPreferredSize(new Dimension(400,700));
+        frame.add(scrollPane, BorderLayout.CENTER);
 
         // Add menu bar
         frame.setJMenuBar(makeMenuBar());
@@ -247,7 +250,28 @@ public class SelectorApp implements PropertyChangeListener {
         //  [3] https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html
         // TODO (embellishment): After a problem, re-show the open dialog.  By reusing the same
         //  chooser, the dialog will show the same directory as before the problem. (0.5 points)
-        throw new UnsupportedOperationException();  // Replace this line
+        int returnVal = chooser.showOpenDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            BufferedImage img =null;
+            try {
+                img = ImageIO.read(file);
+                if (img ==null) {
+                    throw new IOException("Failed to open the file. The file could not be read as an image.");
+                }
+                this.setImage(img);
+
+            } catch (IOException e) {
+                String filePath = file.getPath();
+                String errorMessage = "Could not read the image at "+filePath;
+                JOptionPane.showMessageDialog(null,
+                        errorMessage,
+                        "Unsupported image format",
+                        JOptionPane.ERROR_MESSAGE);
+                openImage();
+            }
+        }
+
     }
 
     /**

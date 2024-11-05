@@ -1,6 +1,8 @@
 package selector;
 
+import javax.swing.event.ChangeListener;
 import java.awt.Point;
+import java.beans.PropertyChangeListener;
 import java.util.ListIterator;
 
 /**
@@ -127,7 +129,9 @@ public class PointToPointSelectionModel extends SelectionModel {
         //  representing the desired line segment.
         //  Test immediately with `testLiveWireStarting()`, and think about how the test might
         //  change for selections with at least one segment (see task 2D).
-        throw new UnsupportedOperationException();  // Replace this line
+        Point lastPoint = new Point(controlPoints.peekLast());
+        PolyLine newLine = new PolyLine(lastPoint,new Point(p));
+        return newLine;
     }
 
     /**
@@ -140,7 +144,13 @@ public class PointToPointSelectionModel extends SelectionModel {
         //  point if this is only the 2nd point) to the current point `p`, then append that segment
         //  to the current selection path and add a copy of `p` as the next control point.
         //  Test immediately with `testAppend()` and `testFinishSelection()`.
-        throw new UnsupportedOperationException();  // Replace this line
+        if (controlPoints.isEmpty()){
+            throw new IllegalStateException("There's no starting point in the selection path.");
+        }
+        Point lastPoint= new Point(controlPoints.peekLast());
+        PolyLine newLine= new PolyLine(lastPoint,new Point(p));
+        segments.add(newLine);
+        controlPoints.add(new Point(p));
     }
 
     /**
@@ -208,7 +218,15 @@ public class PointToPointSelectionModel extends SelectionModel {
             //  null, while new value should be provided by the `selection()` observer to minimize
             //  rep exposure).  Test immediately with `testUndoSelected()`, and add additional tests
             //  per the corresponding task in the test suite (consider writing the tests first).
-            throw new UnsupportedOperationException();  // Replace this line
+            segments.removeLast();
+            if (state().isFinished()){
+                setState(PointToPointState.SELECTING);
+            }else {
+                if (!controlPoints.isEmpty()) {
+                    controlPoints.removeLast();
+                }
+            }
+            propSupport.firePropertyChange("selection", null, selection());
         }
     }
 }

@@ -145,10 +145,64 @@ class PointToPointSelectionModelTest {
     // TODO 2D: Add a test case covering `liveWire()` when the selection path is non-empty.  Check
     //  returned value.
 
+    @DisplayName(
+            "[Task 2B] GIVEN a model with a non-empty selection path, "
+                    + "WHEN a live wire is requested to a location, THEN it will return a straight "
+                    + "line segment from the last point of the selection path to the location.")
+    @Test
+    void testLiveWireNonEmpty() {
+        // Set up the test scenario
+        SelectionModel model = new PointToPointSelectionModel(false);
+        Point startPoint = new Point(0, 0);
+        model.addPoint(startPoint);
+
+        Point lastPoint = new Point(1, 1);
+        model.appendToSelection(lastPoint);
+
+        // Perform the test action
+        Point mouseLocation = new Point(1, 2);
+        PolyLine wire = model.liveWire(mouseLocation);
+
+        // Verify the consequences
+        PolyLine expectedWire = new PolyLine(lastPoint, mouseLocation);
+        assertEquals(expectedWire, wire);
+    }
+
     // TODO 2F: Add a test case covering `undo()` when the selection path is non-empty.  Check
     //  expected state, absence of state change notification, expected selection size, occurrence of
     //  selection change notification, and expected last point.  See `testUndoSelected()` for
     //  inspiration.
+    @DisplayName(
+            "[Task 2E] GIVEN a non-empty selection path, WHEN an undo is requested, THEN it will keep in the "
+                    + "SELECTING state, notifying listeners that its 'state' property has changed, AND its "
+                    + "selection path will have one fewer segment, ending at its previous penultimate "
+                    + "point, AND listeners will be notified that its selection has changed.")
+    @Test
+    void testUndoNonEmpty() {
+        // Set up the test scenario
+        PointToPointSelectionModel model = new PointToPointSelectionModel(false);
+        model.addPoint(new Point(0, 0));
+        model.addPoint(new Point(10, 0));
+        model.addPoint(new Point(10, 10));
+        model.addPoint(new Point(0, 10));
+
+        // Only listen for events after we are done with test setup
+        PclTester observer = new PclTester();
+        model.addPropertyChangeListener(observer);
+
+        // Perform the test action
+        model.undo();
+
+        // Verify the consequences
+        assertEquals(SELECTING, model.state());
+        observer.assertChanged("selection");
+        assertEquals(2, model.selection().size());
+        assertEquals(new Point(10, 10), model.lastPoint());
+    }
+
+
+
+
 
     @DisplayName("GIVEN a model in the SELECTING state with a non-empty selection path, WHEN the "
             + "selection is finished, THEN it will transition to the SELECTED state, notifying "

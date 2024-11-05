@@ -208,7 +208,13 @@ public abstract class SelectionModel {
         //  return a new `Point` object to avoid rep exposure.
         //  Test immediately with `testStart()` (also covered by `testAppend()` after
         //  implementing `appendToSelection()`).
-        throw new UnsupportedOperationException();  // Replace this line
+        Point returnPoint;
+        if (state().isFinished()){
+            returnPoint = new Point(controlPoints.peekFirst());
+        } else {
+            returnPoint = new Point(controlPoints.peekLast());
+        }
+        return returnPoint;
     }
 
     /**

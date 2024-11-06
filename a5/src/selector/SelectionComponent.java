@@ -176,6 +176,12 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
         //  The Graphics API documentation [1] is essential to finding appropriate methods to draw
         //  the segments and control their color.
         //  [1] https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Graphics.html
+        g.setColor(selectionPerimeterColor);
+        for (PolyLine segment:segments){
+            int[] xs = segment.xs();
+            int[] ys = segment.ys();
+            g.drawLine(xs[0],ys[0],xs[1],ys[1]);
+        }
     }
 
     /**
@@ -185,6 +191,13 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
     private void paintLiveWire(Graphics g) {
         // TODO 3C: Implement this method as specified.  The same Graphics methods you used in
         //  `paintSelectionPerimeter()` are relevant here.
+        g.setColor(liveWireColor);
+        Point last = model.lastPoint();
+        int x1 = last.x;
+        int y1 = last.y;
+        int x2 = mouseLocation.x;
+        int y2=mouseLocation.y;
+        g.drawLine(x1,y1,x2,y2);
     }
 
     /**
@@ -225,6 +238,21 @@ public class SelectionComponent extends JComponent implements MouseListener, Mou
         //  The MouseListener [1] and MouseMotionListener [2] tutorials may be helpful.
         //  [1] https://docs.oracle.com/javase/tutorial/uiswing/events/mouselistener.html
         //  [2] https://docs.oracle.com/javase/tutorial/uiswing/events/mousemotionlistener.html
+
+        if (e.getButton()==MouseEvent.BUTTON1){
+            if (model.state().canAddPoint()){
+                model.addPoint(mouseLocation);
+            }
+        } else if (e.getButton()==MouseEvent.BUTTON2){
+            if (model.state().canFinish()){
+                model.finishSelection();
+            }
+        } else if (e.getButton()==MouseEvent.BUTTON3){
+            if (model.state().canUndo()){
+                model.undoPoint();
+            }
+        }
+        repaint();
     }
 
     /**

@@ -78,6 +78,7 @@ public class SelectorApp implements PropertyChangeListener {
 
         // Add control buttons
         // TODO 3E: Call `makeControlPanel()`, then add the result to the window next to the image.
+        frame.add(makeControlPanel(), BorderLayout.LINE_END);
 
         // Controller: Set initial selection tool and update components to reflect its state
         setSelectionModel(new PointToPointSelectionModel(true));
@@ -139,7 +140,28 @@ public class SelectorApp implements PropertyChangeListener {
         //  [1] https://docs.oracle.com/javase/tutorial/uiswing/components/panel.html
         //  [2] https://docs.oracle.com/javase/tutorial/uiswing/layout/grid.html
         //  [3] https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html
-        throw new UnsupportedOperationException();  // Replace this line
+        JPanel buttonsPanel = new JPanel ();
+        GridLayout layout = new GridLayout(0,1);
+        buttonsPanel.setLayout(layout);
+
+        JButton cancel = new JButton("Cancel");
+        buttonsPanel.add(cancel);
+        cancel.addActionListener(e-> model.cancelProcessing());
+
+        JButton undo = new JButton("Undo");
+        buttonsPanel.add(undo);
+        undo.addActionListener(e-> model.undo());
+
+        JButton reset = new JButton("Reset");
+        buttonsPanel.add(reset);
+        reset.addActionListener(e-> model.reset());
+
+        JButton finish = new JButton("Finish");
+        buttonsPanel.add(finish);
+        finish.addActionListener(e-> model.finishSelection());
+
+        return buttonsPanel;
+
 
         // TODO 3G: Add a JComboBox to your control panel that allows the user to choose between
         //  different selection models, including "Point-to-point" and "Spline" (and "Circle" if you

@@ -144,21 +144,21 @@ public class SelectorApp implements PropertyChangeListener {
         GridLayout layout = new GridLayout(0,1);
         buttonsPanel.setLayout(layout);
 
-        JButton cancel = new JButton("Cancel");
-        buttonsPanel.add(cancel);
-        cancel.addActionListener(e-> model.cancelProcessing());
+        cancelButton=new JButton("Cancel");
+        buttonsPanel.add(cancelButton);
+        cancelButton.addActionListener(e-> model.cancelProcessing());
 
-        JButton undo = new JButton("Undo");
-        buttonsPanel.add(undo);
-        undo.addActionListener(e-> model.undo());
+        undoButton=new JButton("Undo");
+        buttonsPanel.add(undoButton);
+        undoButton.addActionListener(e-> model.undo());
 
-        JButton reset = new JButton("Reset");
-        buttonsPanel.add(reset);
-        reset.addActionListener(e-> model.reset());
+        resetButton=new JButton("Reset");
+        buttonsPanel.add(resetButton);
+        resetButton.addActionListener(e-> model.reset());
 
-        JButton finish = new JButton("Finish");
-        buttonsPanel.add(finish);
-        finish.addActionListener(e-> model.finishSelection());
+        finishButton=new JButton("Finish");
+        buttonsPanel.add(finishButton);
+        finishButton.addActionListener(e-> model.finishSelection());
 
         return buttonsPanel;
 
@@ -211,6 +211,10 @@ public class SelectorApp implements PropertyChangeListener {
         //  * Saving is only allowed when the selection is complete
         //  The JButton tutorial [1] shows an example of enabling buttons in an event handler.
         //  [1] https://docs.oracle.com/javase/tutorial/uiswing/components/button.html
+        cancelButton.setEnabled(state.isProcessing());
+        undoButton.setEnabled(state.canUndo());
+        finishButton.setEnabled(state.canFinish());
+        resetButton.setEnabled(!state.isEmpty());
     }
 
     /**
